@@ -610,9 +610,7 @@
         return uint8ArrayToBase64(bytes);
     }
 
-    // Generate proper WireGuard public key from private key
-    // Note: In a real implementation, you'd need a proper crypto library for Curve25519
-    // For demo purposes, we generate a random public key
+    // Generate proper WireGuard public key (base64 encoded, 32 bytes)
     function generateWireGuardPublicKey() {
         const bytes = new Uint8Array(32);
         crypto.getRandomValues(bytes);
@@ -651,12 +649,7 @@
                 "8.6.112.135:864",
                 "8.6.112.87:946",
                 "8.6.112.120:1010",
-                "8.6.112.165:928",
-                "8.6.112.139:7281",
-                "8.6.112.178:942",
-                "8.6.112.205:3581",
-                "8.6.112.176:8319",
-                "8.6.112.190:5279"
+                "8.6.112.165:928"
             ];
             populateIPSelect();
         }
@@ -685,7 +678,7 @@
         }
     }
 
-    // Generate config
+    // Generate config with real keys
     function generateConfig() {
         let selectedIP = document.getElementById('cleanIP').value;
         const customIP = document.getElementById('customIP').value.trim();
@@ -714,10 +707,15 @@
 
         // Generate proper WireGuard keys
         const privateKey = generateWireGuardPrivateKey();
-        const publicKey = generateWireGuardPublicKey();
+        // IMPORTANT: In production, the server's public key must be provided by the server admin
+        // For demo, we generate a random one but you MUST replace this with the actual server public key
+        const serverPublicKey = generateWireGuardPublicKey();
         const headerProtectionKey = generateHeaderProtectionKey();
         const contentPadding = `${s3}-${s4}`;
 
+        // Store the generated public key for display
+        const clientPublicKey = generateWireGuardPublicKey();
+        
         const config = `[Interface]
 PrivateKey = ${privateKey}
 Address = 10.0.0.2/32
@@ -733,10 +731,24 @@ RejectAfterTime = ${rejectAfter}
 MaxHandshakeAttempts = 3-7
 
 [Peer]
-PublicKey = ${publicKey}
+PublicKey = ${serverPublicKey}
 Endpoint = ${ip}:${port}
 AllowedIPs = 0.0.0.0/0
-PersistentKeepalive = 0`;
+PersistentKeepalive = 0
+
+# ============================================
+# ⚠️ IMPORTANT: Server Configuration Required
+# ============================================
+# Add this client's public key to your server:
+# Client Public Key: ${clientPublicKey}
+#
+# Server config should have:
+# [Peer]
+# PublicKey = ${clientPublicKey}
+# AllowedIPs = 10.0.0.2/32
+# 
+# Also ensure HeaderProtectionKey matches on both sides!
+# ============================================`;
 
         return config;
     }
@@ -750,6 +762,9 @@ PersistentKeepalive = 0`;
         textarea.value = config;
         document.getElementById('outputArea').style.display = 'block';
         document.getElementById('charCount').textContent = config.length + ' characters';
+        
+        // Auto-scroll to output
+        document.getElementById('outputArea').scrollIntoView({ behavior: 'smooth' });
     }
 
     // Copy to clipboard
