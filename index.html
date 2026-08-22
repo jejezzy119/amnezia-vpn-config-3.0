@@ -1524,7 +1524,7 @@
 
         try {
           const fallbackResponse = await fetch(
-            'https://raw.githubusercontent.com/DarknessShade/Amnezia-VPN-Config/main/IP.txt',
+            'https://github.com/jejezzy119/amnezia-vpn-config-3.0/blob/main/IP.txt',
           );
           if (!fallbackResponse.ok) throw new Error();
           const text = await fallbackResponse.text();
