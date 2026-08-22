@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تولید کانفیگ AmneziaWG 3.0</title>
+    <style>
+        /* استایل‌های ساده و کاربرپسند */
+        body { font-family: Tahoma, sans-serif; max-width: 800px; margin: 2rem auto; padding: 1rem; background: #f5f5f5; }
+        .container { background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .form-group { margin-bottom: 1.5rem; }
+        label { display: block; font-weight: bold; margin-bottom: 0.3rem; }
+        select, input[type="number"], input[type="text"] { width: 100%; padding: 0.6rem; border: 1px solid #ddd; border-radius: 6px; }
+        .checkbox-group { display: flex; align-items: center; gap: 0.5rem; }
+        .checkbox-group input { width: auto; }
+        button { background: #2d7a3a; color: white; border: none; padding: 0.8rem 2rem; border-radius: 6px; font-size: 1rem; cursor: pointer; }
+        button:hover { background: #1e5a2a; }
+        .output-area { margin-top: 2rem; direction: ltr; text-align: left; }
+        .output-area textarea { width: 100%; height: 300px; font-family: monospace; background: #1e1e1e; color: #d4d4d4; padding: 1rem; border-radius: 6px; border: none; }
+        .copy-btn { background: #0078d4; margin-top: 0.5rem; }
+        .copy-btn:hover { background: #005a9e; }
+        .note { background: #fff3cd; padding: 0.8rem; border-radius: 6px; margin: 1rem 0; border-right: 4px solid #ffc107; }
+        .badge { display: inline-block; background: #6c3b9e; color: white; padding: 0.2rem 0.8rem; border-radius: 20px; font-size: 0.8rem; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>⚡ تولید کانفیگ AmneziaWG 3.0 <span class="badge">جدید</span></h1>
+        <p>ساخت کانفیگ با آی‌پی‌های تمیز کلودفلر و پارامترهای پیشرفته AWG 3.0</p>
+
+        <div class="form-group">
+            <label for="cleanIP">آی‌پی تمیز کلودفلر</label>
+            <select id="cleanIP">
+                <option value="">در حال دریافت آی‌پی‌ها...</option>
+            </select>
+            <small>یا می‌توانید به‌صورت دستی وارد کنید: <input type="text" id="customIP" placeholder="مثلاً 104.16.0.1" style="width: auto; display: inline-block;"></small>
+        </div>
+
+        <div class="form-group">
+            <label for="port">پورت</label>
+            <input type="number" id="port" value="443" min="1" max="65535">
+        </div>
+
+        <div class="form-group">
+            <label>تنظیمات پدینگ (Padding)</label>
+            <div style="display: flex; gap: 1rem;">
+                <div><label>S3 (حداقل)</label> <input type="number" id="s3" value="12" min="12"></div>
+                <div><label>S4 (حداکثر)</label> <input type="number" id="s4" value="128" min="12"></div>
+            </div>
+            <small>در AWG 3.0 مقدار S3 و S4 باید حداقل 12 باشد.</small>
+        </div>
+
+        <div class="form-group">
+            <label>تنظیمات تایمر (محدوده تصادفی)</label>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem;">
+                <div><label>Keepalive</label> <input type="text" id="keepalive" value="8-22" placeholder="8-22"></div>
+                <div><label>Rekey After</label> <input type="text" id="rekeyAfter" value="105-140" placeholder="105-140"></div>
+                <div><label>Rekey Timeout</label> <input type="text" id="rekeyTimeout" value="3-8" placeholder="3-8"></div>
+                <div><label>Reject After</label> <input type="text" id="rejectAfter" value="160-220" placeholder="160-220"></div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="checkbox-group">
+                <input type="checkbox" id="enableAWG3" checked disabled>
+                <label for="enableAWG3" style="display: inline;">فعال‌سازی پارامترهای AWG 3.0 <span class="badge">پیش‌فرض</span></label>
+            </div>
+            <small>پارامترهای HeaderProtectionKey و ContentPaddingAddition به‌صورت خودکار تولید می‌شوند.</small>
+        </div>
+
+        <button id="generateBtn">🔧 ساخت کانفیگ</button>
+
+        <div class="output-area" id="outputArea" style="display: none;">
+            <h3>کانفیگ تولید شده:</h3>
+            <div class="note">
+                ⚠️ کلید <strong>HeaderProtectionKey</strong> در بخش <code>[Interface]</code> باید دقیقاً بین سرور و کلاینت یکسان باشد.
+            </div>
+            <textarea id="configOutput" readonly></textarea>
+            <button class="copy-btn" id="copyBtn">📋 کپی در کلیپ‌بورد</button>
+            <button class="copy-btn" id="downloadBtn" style="background: #6c3b9e;">⬇️ دانلود فایل .conf</button>
+        </div>
+    </div>
+
+    <script>
+        // ---------- گام دوم: منطق برنامه (جاوااسکریپت) ----------
+        
+        // دریافت آی‌پی‌های تمیز از سرویس‌دهنده
+        async function fetchCleanIPs() {
+            const select = document.getElementById('cleanIP');
+            try {
+                // در اینجا می‌توانید از API خود یا سرویس‌های عمومی استفاده کنید
+                // برای نمونه از یک لیست ثابت استفاده می‌کنیم
+                const ips = [
+                    '104.16.0.1', '104.16.1.1', '104.16.2.1', '104.16.3.1',
+                    '104.16.4.1', '104.16.5.1', '104.16.6.1', '104.16.7.1',
+                    '104.16.8.1', '104.16.9.1', '104.16.10.1', '104.16.11.1',
+                    '104.16.12.1', '104.16.13.1', '104.16.14.1', '104.16.15.1'
+                ];
+                select.innerHTML = ips.map(ip => `<option value="${ip}">${ip}</option>`).join('');
+                select.innerHTML += `<option value="custom">استفاده از آی‌پی دستی</option>`;
+            } catch (error) {
+                select.innerHTML = '<option value="">خطا در دریافت آی‌پی‌ها</option>';
+                console.error('خطا:', error);
+            }
+        }
+
+        // تولید کلید تصادفی برای HeaderProtectionKey (32 بایت = 64 کاراکتر هگز)
+        function generateRandomKey() {
+            const bytes = new Uint8Array(32);
+            crypto.getRandomValues(bytes);
+            return Array.from(bytes).map(b => b.toString(16).padStart(2, '0')).join('');
+        }
+
+        // تولید کلید خصوصی/عمومی (برای ساده‌سازی از کلیدهای تصادفی استفاده می‌کنیم)
+        function generatePrivateKey() {
+            const bytes = new Uint8Array(32);
+            crypto.getRandomValues(bytes);
+            return 'PRIVATE_KEY_' + Array.from(bytes).map(b => b.toString(16).padStart(2, '0')).join('').substring(0, 32);
+        }
+
+        // تولید کانفیگ نهایی
+        function generateConfig() {
+            // دریافت مقادیر از فرم
+            let ip = document.getElementById('cleanIP').value;
+            const customIP = document.getElementById('customIP').value.trim();
+            if (customIP) ip = customIP;
+            
+            const port = document.getElementById('port').value;
+            const s3 = document.getElementById('s3').value;
+            const s4 = document.getElementById('s4').value;
+            const keepalive = document.getElementById('keepalive').value;
+            const rekeyAfter = document.getElementById('rekeyAfter').value;
+            const rekeyTimeout = document.getElementById('rekeyTimeout').value;
+            const rejectAfter = document.getElementById('rejectAfter').value;
+
+            if (!ip || ip === 'custom') {
+                alert('لطفاً یک آی‌پی تمیز معتبر وارد کنید.');
+                return;
+            }
+
+            // تولید پارامترهای AWG 3.0
+            const headerProtectionKey = generateRandomKey();
+            const contentPadding = `${s3}-${s4}`;
+            
+            // تولید کلیدهای ساده (در محیط واقعی باید از کتابخانه‌های مناسب استفاده شود)
+            const privateKey = generatePrivateKey();
+            const publicKey = 'PUBLIC_KEY_' + generateRandomKey().substring(0, 32);
+
+            // ساخت کانفیگ
+            const config = `[Interface]
+        PrivateKey = ${privateKey}
+        Address = 10.0.0.2/32
+        DNS = 1.1.1.1, 8.8.8.8
+
+        # پارامترهای AWG 3.0
+        HeaderProtectionKey = ${headerProtectionKey}
+        ContentPaddingAddition = ${contentPadding}
+        KeepaliveTimeout = ${keepalive}
+        RekeyAfterTime = ${rekeyAfter}
+        RekeyTimeout = ${rekeyTimeout}
+        RejectAfterTime = ${rejectAfter}
+        MaxHandshakeAttempts = 3-7
+
+        [Peer]
+        PublicKey = ${publicKey}
+        Endpoint = ${ip}:${port}
+        AllowedIPs = 0.0.0.0/0
+        PersistentKeepalive = 0`;
+
+            return config;
+        }
+
+        // نمایش کانفیگ در خروجی
+        function displayConfig() {
+            const config = generateConfig();
+            if (!config) return;
+            
+            document.getElementById('configOutput').value = config;
+            document.getElementById('outputArea').style.display = 'block';
+        }
+
+        // کپی در کلیپ‌بورد
+        function copyConfig() {
+            const textarea = document.getElementById('configOutput');
+            navigator.clipboard.writeText(textarea.value).then(() => {
+                alert('کانفیگ کپی شد!');
+            }).catch(() => {
+                textarea.select();
+                document.execCommand('copy');
+                alert('کانفیگ کپی شد!');
+            });
+        }
+
+        // دانلود فایل
+        function downloadConfig() {
+            const config = document.getElementById('configOutput').value;
+            if (!config) return;
+            
+            const blob = new Blob([config], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `awg3_${new Date().getTime()}.conf`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        // ---------- گام سوم: راه‌اندازی رویدادها ----------
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            // دریافت آی‌پی‌های تمیز
+            fetchCleanIPs();
+            
+            // دکمه تولید کانفیگ
+            document.getElementById('generateBtn').addEventListener('click', displayConfig);
+            
+            // دکمه کپی
+            document.getElementById('copyBtn').addEventListener('click', copyConfig);
+            
+            // دکمه دانلود
+            document.getElementById('downloadBtn').addEventListener('click', downloadConfig);
+            
+            // فعال‌سازی فیلد آی‌پی دستی
+            document.getElementById('cleanIP').addEventListener('change', function() {
+                const customField = document.getElementById('customIP');
+                if (this.value === 'custom') {
+                    customField.style.display = 'inline-block';
+                    customField.focus();
+                } else {
+                    customField.style.display = 'inline-block';
+                    customField.value = '';
+                }
+            });
+        });
+    </script>
+</body>
+</html>
