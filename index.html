@@ -1,888 +1,1650 @@
 <!DOCTYPE html>
-<html lang="en" dir="ltr">
+<html lang="fa">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AmneziaWG 3.0 Config Generator</title>
-    <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
-
-    * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-    }
-
-    body {
-        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-        min-height: 100vh;
-        background: #f6f8fc;
-        background-image: 
-            radial-gradient(circle at 20% 30%, rgba(79, 70, 229, 0.04) 0%, transparent 50%),
-            radial-gradient(circle at 80% 70%, rgba(236, 72, 153, 0.04) 0%, transparent 45%),
-            radial-gradient(circle at 40% 90%, rgba(16, 185, 129, 0.03) 0%, transparent 40%);
-        padding: 2rem;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        min-height: 100vh;
-        color: #1e293b;
-        direction: ltr;
-    }
-
-    /* ── Main Card ── */
-    .container {
-        background: rgba(255, 255, 255, 0.82);
-        backdrop-filter: blur(12px);
-        -webkit-backdrop-filter: blur(12px);
-        border-radius: 32px;
-        padding: 2.5rem 2.8rem;
-        max-width: 960px;
-        width: 100%;
-        box-shadow: 
-            0 20px 60px rgba(0, 0, 0, 0.06),
-            0 8px 24px rgba(0, 0, 0, 0.03),
-            0 0 0 1px rgba(255, 255, 255, 0.5) inset;
-        border: 1px solid rgba(255, 255, 255, 0.3);
-        transition: all 0.2s ease;
-        position: relative;
-    }
-
-    /* Subtle gradient border */
-    .container::before {
-        content: '';
-        position: absolute;
-        inset: -1px;
-        border-radius: 32px;
-        padding: 1.5px;
-        background: linear-gradient(135deg, 
-            rgba(79, 70, 229, 0.25), 
-            rgba(236, 72, 153, 0.15), 
-            rgba(16, 185, 129, 0.10));
-        -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-        mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-        -webkit-mask-composite: xor;
-        mask-composite: exclude;
-        pointer-events: none;
-        z-index: 0;
-    }
-
-    .container > * {
-        position: relative;
-        z-index: 1;
-    }
-
-    /* ── Header ── */
-    .header {
-        display: flex;
-        justify-content: space-between;
-        align-items: flex-end;
-        flex-wrap: wrap;
-        gap: 0.75rem;
-        margin-bottom: 2rem;
-        padding-bottom: 1.25rem;
-        border-bottom: 1px solid rgba(0, 0, 0, 0.04);
-    }
-
-    .header-left h1 {
-        font-size: 2.2rem;
-        font-weight: 700;
-        letter-spacing: -0.02em;
-        background: linear-gradient(145deg, #4f46e5, #7c3aed);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-        margin-bottom: 0.15rem;
-    }
-
-    .subtitle {
-        color: #64748b;
-        font-size: 0.95rem;
-        font-weight: 400;
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        flex-wrap: wrap;
-    }
-
-    .badge {
-        background: rgba(79, 70, 229, 0.08);
-        color: #4f46e5;
-        padding: 0.2rem 0.9rem;
-        border-radius: 40px;
-        font-size: 0.7rem;
-        font-weight: 600;
-        letter-spacing: 0.3px;
-        text-transform: uppercase;
-        border: 1px solid rgba(79, 70, 229, 0.12);
-        display: inline-block;
-    }
-
-    /* ── Form Elements ── */
-    .form-group {
-        margin-bottom: 1.5rem;
-    }
-
-    label {
-        display: block;
-        color: #1e293b;
-        font-weight: 600;
-        font-size: 0.85rem;
-        letter-spacing: 0.2px;
-        margin-bottom: 0.4rem;
-    }
-
-    label .optional {
-        color: #94a3b8;
-        font-weight: 400;
-        font-size: 0.75rem;
-    }
-
-    select,
-    input[type="number"],
-    input[type="text"] {
-        width: 100%;
-        padding: 0.75rem 1rem;
-        background: rgba(255, 255, 255, 0.6);
-        border: 1px solid rgba(0, 0, 0, 0.06);
-        border-radius: 14px;
-        color: #0f172a;
-        font-family: 'Inter', sans-serif;
-        font-size: 0.95rem;
-        transition: all 0.2s ease;
-        outline: none;
-        box-shadow: 0 2px 6px rgba(0,0,0,0.01);
-        backdrop-filter: blur(4px);
-    }
-
-    select:hover,
-    input:hover {
-        background: rgba(255, 255, 255, 0.8);
-        border-color: rgba(0, 0, 0, 0.10);
-    }
-
-    select:focus,
-    input:focus {
-        border-color: #4f46e5;
-        background: white;
-        box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.08), 0 2px 8px rgba(0,0,0,0.02);
-    }
-
-    select option {
-        background: white;
-        color: #0f172a;
-    }
-
-    select {
-        appearance: none;
-        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%2364758b' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
-        background-repeat: no-repeat;
-        background-position: right 1.2rem center;
-        cursor: pointer;
-    }
-
-    /* ── Checkbox ── */
-    .checkbox-group {
-        display: flex;
-        align-items: center;
-        gap: 0.75rem;
-        margin-bottom: 1rem;
-    }
-
-    .checkbox-group input[type="checkbox"] {
-        width: 20px;
-        height: 20px;
-        accent-color: #4f46e5;
-        cursor: pointer;
-        flex-shrink: 0;
-        border-radius: 6px;
-        border: 1px solid rgba(0, 0, 0, 0.08);
-        background: white;
-    }
-
-    .checkbox-group label {
-        margin-bottom: 0;
-        cursor: pointer;
-        font-weight: 400;
-        color: #1e293b;
-    }
-
-    /* ── Grid & Layout ── */
-    .grid-2col {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 1.25rem;
-    }
-
-    .flex-row {
-        display: flex;
-        gap: 0.75rem;
-        align-items: center;
-        flex-wrap: wrap;
-    }
-
-    .flex-row label {
-        margin-bottom: 0;
-        white-space: nowrap;
-        font-weight: 400;
-        color: #334155;
-    }
-
-    .flex-row input {
-        width: auto;
-        flex: 1;
-        min-width: 160px;
-    }
-
-    #customIP {
-        display: inline-block;
-        width: auto;
-        flex: 1;
-        min-width: 180px;
-    }
-
-    .small-text {
-        color: #94a3b8;
-        font-size: 0.75rem;
-        margin-top: 0.3rem;
-        display: block;
-    }
-
-    /* ── Buttons ── */
-    .btn-primary {
-        background: linear-gradient(145deg, #4f46e5, #7c3aed);
-        color: white;
-        border: none;
-        padding: 0.85rem 2.5rem;
-        border-radius: 14px;
-        font-family: 'Inter', sans-serif;
-        font-weight: 600;
-        font-size: 0.95rem;
-        letter-spacing: 0.2px;
-        cursor: pointer;
-        transition: all 0.2s ease;
-        box-shadow: 0 6px 20px rgba(79, 70, 229, 0.18);
-        width: 100%;
-        border: 1px solid rgba(255, 255, 255, 0.15);
-    }
-
-    .btn-primary:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 10px 30px rgba(79, 70, 229, 0.25);
-        background: linear-gradient(145deg, #6366f1, #7c3aed);
-    }
-
-    .btn-primary:active {
-        transform: translateY(0);
-        box-shadow: 0 4px 12px rgba(79, 70, 229, 0.15);
-    }
-
-    .btn-group {
-        display: flex;
-        gap: 0.75rem;
-        flex-wrap: wrap;
-        margin-top: 0.5rem;
-    }
-
-    .btn-group button {
-        width: auto;
-        flex: 1;
-        min-width: 120px;
-        padding: 0.7rem 1.5rem;
-        font-size: 0.85rem;
-        border-radius: 12px;
-        font-weight: 600;
-        border: 1px solid rgba(0, 0, 0, 0.04);
-        transition: all 0.15s ease;
-        cursor: pointer;
-    }
-
-    .btn-copy {
-        background: rgba(255, 255, 255, 0.6);
-        backdrop-filter: blur(4px);
-        box-shadow: 0 2px 8px rgba(0,0,0,0.02);
-        border: 1px solid rgba(0, 0, 0, 0.04);
-        color: #1e293b;
-    }
-
-    .btn-copy:hover {
-        background: white;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.04);
-        transform: translateY(-1px);
-        border-color: rgba(0, 0, 0, 0.08);
-    }
-
-    .btn-download {
-        background: linear-gradient(145deg, #10b981, #059669);
-        color: white;
-        box-shadow: 0 6px 18px rgba(16, 185, 129, 0.15);
-        border: 1px solid rgba(255, 255, 255, 0.10);
-    }
-
-    .btn-download:hover {
-        background: linear-gradient(145deg, #34d399, #059669);
-        box-shadow: 0 8px 28px rgba(16, 185, 129, 0.22);
-        transform: translateY(-2px);
-    }
-
-    /* ── Output Area ── */
-    .output-area {
-        margin-top: 2rem;
-        padding-top: 1.75rem;
-        border-top: 1px solid rgba(0, 0, 0, 0.04);
-    }
-
-    .output-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 0.75rem;
-    }
-
-    .output-header h3 {
-        color: #1e293b;
-        font-size: 0.95rem;
-        font-weight: 600;
-    }
-
-    .output-header span {
-        color: #94a3b8;
-        font-size: 0.75rem;
-    }
-
-    .output-area textarea {
-        width: 100%;
-        height: 320px;
-        font-family: 'JetBrains Mono', 'Fira Code', monospace;
-        background: rgba(255, 255, 255, 0.5);
-        backdrop-filter: blur(4px);
-        color: #0f172a;
-        padding: 1.25rem;
-        border-radius: 16px;
-        border: 1px solid rgba(0, 0, 0, 0.04);
-        resize: vertical;
-        font-size: 0.85rem;
-        line-height: 1.7;
-        transition: all 0.2s ease;
-        outline: none;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.01);
-    }
-
-    .output-area textarea:focus {
-        border-color: rgba(79, 70, 229, 0.15);
-        background: rgba(255, 255, 255, 0.7);
-        box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.04);
-    }
-
-    .output-area textarea::selection {
-        background: rgba(79, 70, 229, 0.12);
-        color: #0f172a;
-    }
-
-    /* ── Note ── */
-    .note {
-        background: rgba(79, 70, 229, 0.03);
-        border-left: 3px solid #4f46e5;
-        padding: 0.85rem 1.25rem;
-        border-radius: 12px;
-        margin: 1rem 0 1.25rem 0;
-        color: #334155;
-        font-size: 0.85rem;
-        line-height: 1.6;
-        backdrop-filter: blur(4px);
-        border: 1px solid rgba(79, 70, 229, 0.04);
-    }
-
-    .note code {
-        background: rgba(79, 70, 229, 0.06);
-        padding: 0.15rem 0.5rem;
-        border-radius: 6px;
-        color: #4f46e5;
-        font-family: 'JetBrains Mono', monospace;
-        font-size: 0.8rem;
-    }
-
-    .note strong {
-        color: #0f172a;
-        font-weight: 600;
-    }
-
-    /* ── Divider ── */
-    .divider {
-        height: 1px;
-        background: linear-gradient(90deg, transparent, rgba(0, 0, 0, 0.04), transparent);
-        margin: 1.5rem 0;
-    }
-
-    /* ── Scrollbar ── */
-    ::-webkit-scrollbar {
-        width: 6px;
-        height: 6px;
-    }
-
-    ::-webkit-scrollbar-track {
-        background: rgba(0, 0, 0, 0.02);
-        border-radius: 12px;
-    }
-
-    ::-webkit-scrollbar-thumb {
-        background: rgba(0, 0, 0, 0.06);
-        border-radius: 12px;
-    }
-
-    ::-webkit-scrollbar-thumb:hover {
-        background: rgba(0, 0, 0, 0.10);
-    }
-
-    ::selection {
-        background: rgba(79, 70, 229, 0.12);
-        color: #0f172a;
-    }
-
-    /* ── Responsive ── */
-    @media (max-width: 768px) {
-        body {
-            padding: 1rem;
-        }
-
-        .container {
-            padding: 1.75rem;
-            border-radius: 24px;
-        }
-
-        .grid-2col {
-            grid-template-columns: 1fr;
-            gap: 0.75rem;
-        }
-
-        .btn-group {
-            flex-direction: column;
-        }
-
-        .btn-group button {
-            width: 100%;
-        }
-
-        .flex-row {
-            flex-direction: column;
-            align-items: stretch;
-        }
-
-        .flex-row input {
-            width: 100%;
-            min-width: unset;
-        }
-
-        #customIP {
-            width: 100%;
-        }
-
-        .header-left h1 {
-            font-size: 1.8rem;
-        }
-    }
-
-    @media (max-width: 480px) {
-        .container {
-            padding: 1.25rem;
-        }
-
-        .header-left h1 {
-            font-size: 1.5rem;
-        }
-
-        .output-area textarea {
-            height: 250px;
-            font-size: 0.75rem;
-            padding: 0.9rem;
-        }
-    }
-</style>
-</head>
-<body>
-    <div class="container">
-        <div class="header">
-            <div class="header-left">
-                <h1>⚡ AmneziaWG 3.0 Config Generator</h1>
-                <div class="subtitle">
-                    <span>Generate clean IP configs with AWG 3.0 parameters</span>
-                    <span class="badge">New</span>
-                </div>
-            </div>
-        </div>
-
-        <div class="form-group">
-            <label for="cleanIP">Clean Cloudflare IP</label>
-            <select id="cleanIP">
-                <option value="">Loading IPs...</option>
-            </select>
-            <div class="flex-row" style="margin-top: 0.5rem;">
-                <label for="customIP" style="font-weight: 400; color: #64748b;">Or enter manually:</label>
-                <input type="text" id="customIP" placeholder="e.g. 104.16.0.1">
-            </div>
-        </div>
-
-        <div class="form-group">
-            <label>Padding Settings</label>
-            <div class="grid-2col">
-                <div>
-                    <label for="s3" style="font-weight: 400; font-size: 0.8rem;">S3 (minimum)</label>
-                    <input type="number" id="s3" value="12" min="12">
-                </div>
-                <div>
-                    <label for="s4" style="font-weight: 400; font-size: 0.8rem;">S4 (maximum)</label>
-                    <input type="number" id="s4" value="128" min="12">
-                </div>
-            </div>
-            <span class="small-text">In AWG 3.0, S3 and S4 values must be at least 12.</span>
-        </div>
-
-        <div class="form-group">
-            <label>Timer Settings (random range)</label>
-            <div class="grid-2col">
-                <div>
-                    <label for="keepalive" style="font-weight: 400; font-size: 0.8rem;">Keepalive</label>
-                    <input type="text" id="keepalive" value="8-22" placeholder="8-22">
-                </div>
-                <div>
-                    <label for="rekeyAfter" style="font-weight: 400; font-size: 0.8rem;">Rekey After</label>
-                    <input type="text" id="rekeyAfter" value="105-140" placeholder="105-140">
-                </div>
-                <div>
-                    <label for="rekeyTimeout" style="font-weight: 400; font-size: 0.8rem;">Rekey Timeout</label>
-                    <input type="text" id="rekeyTimeout" value="3-8" placeholder="3-8">
-                </div>
-                <div>
-                    <label for="rejectAfter" style="font-weight: 400; font-size: 0.8rem;">Reject After</label>
-                    <input type="text" id="rejectAfter" value="160-220" placeholder="160-220">
-                </div>
-            </div>
-        </div>
-
-        <div class="form-group">
-            <div class="checkbox-group">
-                <input type="checkbox" id="enableAWG3" checked disabled>
-                <label for="enableAWG3" style="display: inline;">Enable AWG 3.0 Parameters <span class="badge">Default</span></label>
-            </div>
-            <span class="small-text">HeaderProtectionKey and ContentPaddingAddition are auto-generated.</span>
-        </div>
-
-        <button class="btn-primary" id="generateBtn">🔧 Generate Config</button>
-
-        <div class="output-area" id="outputArea" style="display: none;">
-            <div class="output-header">
-                <h3>📄 Generated Config</h3>
-                <span id="charCount">0 characters</span>
-            </div>
-            <div class="note">
-                ⚠️ The <strong>HeaderProtectionKey</strong> in the <code>[Interface]</code> section must be identical between server and client.
-            </div>
-            <textarea id="configOutput" readonly></textarea>
-            <div class="btn-group">
-                <button class="btn-copy" id="copyBtn">📋 Copy to Clipboard</button>
-                <button class="btn-download" id="downloadBtn">⬇️ Download .conf</button>
-            </div>
-        </div>
-    </div>
-<script>
-    // ---------- IP List from ips.txt ----------
-    let IP_LIST = [];
-
-    // ---------- WireGuard Key Generation (Proper) ----------
-    // Convert Uint8Array to base64
-    function uint8ArrayToBase64(bytes) {
-        let binary = '';
-        const len = bytes.byteLength;
-        for (let i = 0; i < len; i++) {
-            binary += String.fromCharCode(bytes[i]);
-        }
-        return btoa(binary);
-    }
-
-    // Generate proper WireGuard private key (base64 encoded, 32 bytes)
-    function generateWireGuardPrivateKey() {
-        const bytes = new Uint8Array(32);
-        crypto.getRandomValues(bytes);
-        // Clamp the key for WireGuard compatibility
-        bytes[0] &= 248;
-        bytes[31] &= 127;
-        bytes[31] |= 64;
-        return uint8ArrayToBase64(bytes);
-    }
-
-    // Generate proper WireGuard public key (base64 encoded, 32 bytes)
-    function generateWireGuardPublicKey() {
-        const bytes = new Uint8Array(32);
-        crypto.getRandomValues(bytes);
-        return uint8ArrayToBase64(bytes);
-    }
-
-    // Generate HeaderProtectionKey (32 bytes hex)
-    function generateHeaderProtectionKey() {
-        const bytes = new Uint8Array(32);
-        crypto.getRandomValues(bytes);
-        return Array.from(bytes).map(b => b.toString(16).padStart(2, '0')).join('');
-    }
-
-    // Fetch IP list from ips.txt file
-    async function loadIPList() {
-        try {
-            const response = await fetch('ips.txt');
-            if (!response.ok) {
-                throw new Error('Failed to load ips.txt');
-            }
-            const text = await response.text();
-            IP_LIST = text.split('\n')
-                .map(line => line.trim())
-                .filter(line => line.length > 0 && line.includes(':'));
-            
-            if (IP_LIST.length === 0) {
-                throw new Error('No IPs found');
-            }
-            
-            populateIPSelect();
-        } catch (error) {
-            console.error('Error loading ips.txt:', error);
-            // Use default list as fallback
-            IP_LIST = [
-                "8.6.112.148:891",
-                "8.6.112.135:864",
-                "8.6.112.87:946",
-                "8.6.112.120:1010",
-                "8.6.112.165:928"
-            ];
-            populateIPSelect();
-        }
-    }
-
-    // Populate IP select dropdown
-    function populateIPSelect() {
-        const select = document.getElementById('cleanIP');
-        select.innerHTML = '';
-        
-        IP_LIST.forEach(ip => {
-            const option = document.createElement('option');
-            option.value = ip;
-            option.textContent = ip;
-            select.appendChild(option);
-        });
-        
-        const customOption = document.createElement('option');
-        customOption.value = 'custom';
-        customOption.textContent = '✏️ Use custom IP';
-        select.appendChild(customOption);
-        
-        const countDisplay = document.getElementById('ipCount');
-        if (countDisplay) {
-            countDisplay.textContent = `(${IP_LIST.length} IPs loaded)`;
-        }
-    }
-
-    // Generate config with real keys
-    function generateConfig() {
-        let selectedIP = document.getElementById('cleanIP').value;
-        const customIP = document.getElementById('customIP').value.trim();
-        
-        if (customIP) {
-            if (customIP.includes(':')) {
-                selectedIP = customIP;
-            } else {
-                selectedIP = customIP + ':443';
-            }
-        }
-        
-        if (!selectedIP || selectedIP === 'custom') {
-            alert('Please select or enter a valid IP address.');
-            return;
-        }
-
-        const [ip, port] = selectedIP.split(':');
-        
-        const s3 = document.getElementById('s3').value;
-        const s4 = document.getElementById('s4').value;
-        const keepalive = document.getElementById('keepalive').value;
-        const rekeyAfter = document.getElementById('rekeyAfter').value;
-        const rekeyTimeout = document.getElementById('rekeyTimeout').value;
-        const rejectAfter = document.getElementById('rejectAfter').value;
-
-        // Generate proper WireGuard keys
-        const privateKey = generateWireGuardPrivateKey();
-        // IMPORTANT: In production, the server's public key must be provided by the server admin
-        // For demo, we generate a random one but you MUST replace this with the actual server public key
-        const serverPublicKey = generateWireGuardPublicKey();
-        const headerProtectionKey = generateHeaderProtectionKey();
-        const contentPadding = `${s3}-${s4}`;
-
-        // Store the generated public key for display
-        const clientPublicKey = generateWireGuardPublicKey();
-        
-        const config = `[Interface]
-PrivateKey = ${privateKey}
-Address = 10.0.0.2/32
-DNS = 1.1.1.1, 8.8.8.8
-
-# AWG 3.0 Parameters
-HeaderProtectionKey = ${headerProtectionKey}
-ContentPaddingAddition = ${contentPadding}
-KeepaliveTimeout = ${keepalive}
-RekeyAfterTime = ${rekeyAfter}
-RekeyTimeout = ${rekeyTimeout}
-RejectAfterTime = ${rejectAfter}
-MaxHandshakeAttempts = 3-7
-
-[Peer]
-PublicKey = ${serverPublicKey}
-Endpoint = ${ip}:${port}
-AllowedIPs = 0.0.0.0/0
-PersistentKeepalive = 0
-
-# ============================================
-# ⚠️ IMPORTANT: Server Configuration Required
-# ============================================
-# Add this client's public key to your server:
-# Client Public Key: ${clientPublicKey}
-#
-# Server config should have:
-# [Peer]
-# PublicKey = ${clientPublicKey}
-# AllowedIPs = 10.0.0.2/32
-# 
-# Also ensure HeaderProtectionKey matches on both sides!
-# ============================================`;
-
-        return config;
-    }
-
-    // Display config
-    function displayConfig() {
-        const config = generateConfig();
-        if (!config) return;
-        
-        const textarea = document.getElementById('configOutput');
-        textarea.value = config;
-        document.getElementById('outputArea').style.display = 'block';
-        document.getElementById('charCount').textContent = config.length + ' characters';
-        
-        // Auto-scroll to output
-        document.getElementById('outputArea').scrollIntoView({ behavior: 'smooth' });
-    }
-
-    // Copy to clipboard
-    function copyConfig() {
-        const textarea = document.getElementById('configOutput');
-        navigator.clipboard.writeText(textarea.value).then(() => {
-            const btn = document.getElementById('copyBtn');
-            const orig = btn.textContent;
-            btn.textContent = '✅ Copied!';
-            setTimeout(() => { btn.textContent = orig; }, 1500);
-        }).catch(() => {
-            textarea.select();
-            document.execCommand('copy');
-            alert('Config copied to clipboard!');
-        });
-    }
-
-    // Download file
-    function downloadConfig() {
-        const config = document.getElementById('configOutput').value;
-        if (!config) {
-            alert('Please generate a config first.');
-            return;
-        }
-        
-        const blob = new Blob([config], { type: 'text/plain' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `awg3_${new Date().getTime()}.conf`;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
-    }
-
-    // Download IP list as ips.txt
-    function downloadIPList() {
-        const content = IP_LIST.join('\n');
-        const blob = new Blob([content], { type: 'text/plain' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = 'ips.txt';
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
-    }
-
-    // Refresh IP list from file
-    async function refreshIPList() {
-        const btn = document.getElementById('refreshIPBtn');
-        const origText = btn.textContent;
-        btn.textContent = '🔄 Loading...';
-        btn.disabled = true;
-        
-        await loadIPList();
-        
-        btn.textContent = '✅ Loaded!';
-        setTimeout(() => {
-            btn.textContent = origText;
-            btn.disabled = false;
-        }, 1500);
-    }
-
-    // ---------- Event Listeners ----------
+    <title>Amnezia VPN Config Generator</title>
+    <meta name="description" content="Generate customized AmneziaWG / WG Tunnel configurations with custom Junk, Endpoint, and MTU settings.">
     
-    document.addEventListener('DOMContentLoaded', () => {
-        loadIPList();
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;600;700&family=Vazirmatn:wght@300;400;500;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body.light {
+            --bg: #eef2f7;
+            --bg-card: rgba(255, 255, 255, 0.85);
+            --border: rgba(0, 0, 0, 0.08);
+            --border-accent-pub: rgba(6, 182, 212, 0.32);
+            --border-accent-priv: rgba(139, 92, 246, 0.28);
+            --glow-pub: rgba(6, 182, 212, 0.08);
+            --glow-priv: rgba(139, 92, 246, 0.06);
+            --accent-pub: #0891b2;
+            --accent-priv: #7c3aed;
+            --accent-pub-dim: rgba(6, 182, 212, 0.55);
+            --accent-priv-dim: rgba(139, 92, 246, 0.5);
+            --dot-pub: #06b6d4;
+            --dot-priv: #8b5cf6;
+            --text-primary: #1e293b;
+            --text-muted: #64748b;
+            --text-key: #334155;
+            --btn-bg: rgba(0, 0, 0, 0.04);
+            --btn-bg-hover: rgba(0, 0, 0, 0.08);
+            --btn-border: rgba(0, 0, 0, 0.1);
+            --btn-text: #64748b;
+            --btn-text-hover: #1e293b;
+            --btn-ok-bg: rgba(22, 163, 74, 0.1);
+            --btn-ok-border: rgba(22, 163, 74, 0.3);
+            --btn-ok-text: #16a34a;
+            --gen-bg: linear-gradient(135deg, rgba(6, 182, 212, 0.1), rgba(139, 92, 246, 0.07));
+            --gen-bg-hover: linear-gradient(135deg, rgba(6, 182, 212, 0.18), rgba(139, 92, 246, 0.14));
+            --gen-border: rgba(6, 182, 212, 0.38);
+            --gen-border-hover: rgba(6, 182, 212, 0.58);
+            --gen-text: #0891b2;
+            --gen-glow: rgba(6, 182, 212, 0.16);
+            --status-bg: rgba(0, 0, 0, 0.03);
+            --status-border: rgba(0, 0, 0, 0.07);
+            --status-text: #64748b;
+            --status-dot: #16a34a;
+            --shield-color: #0891b2;
+            --shield-bg: linear-gradient(135deg, rgba(6, 182, 212, 0.1), rgba(139, 92, 246, 0.07));
+            --shield-border: rgba(6, 182, 212, 0.22);
+            --orb1: rgba(6, 182, 212, 0.06);
+            --orb2: rgba(139, 92, 246, 0.04);
+            --orb3: rgba(99, 102, 241, 0.04);
+            --grid: rgba(6, 182, 212, 0.025);
+            --toggle-track: #cbd5e1;
+            --toggle-thumb: #ffffff;
+            --toggle-icon: #64748b;
+            --input-bg: rgba(255, 255, 255, 0.9);
+        }
+
+        body.dark {
+            --bg: #060d1f;
+            --bg-card: rgba(15, 23, 42, 0.72);
+            --border: rgba(148, 163, 184, 0.1);
+            --border-accent-pub: rgba(56, 189, 248, 0.25);
+            --border-accent-priv: rgba(167, 139, 250, 0.25);
+            --glow-pub: rgba(56, 189, 248, 0.1);
+            --glow-priv: rgba(167, 139, 250, 0.1);
+            --accent-pub: #38bdf8;
+            --accent-priv: #a78bfa;
+            --accent-pub-dim: rgba(56, 189, 248, 0.6);
+            --accent-priv-dim: rgba(167, 139, 250, 0.6);
+            --dot-pub: #38bdf8;
+            --dot-priv: #a78bfa;
+            --text-primary: #f1f5f9;
+            --text-muted: rgba(148, 163, 184, 0.45);
+            --text-key: #cbd5e1;
+            --btn-bg: rgba(148, 163, 184, 0.08);
+            --btn-bg-hover: rgba(148, 163, 184, 0.15);
+            --btn-border: rgba(148, 163, 184, 0.18);
+            --btn-text: #94a3b8;
+            --btn-text-hover: #e2e8f0;
+            --btn-ok-bg: rgba(34, 197, 94, 0.14);
+            --btn-ok-border: rgba(34, 197, 94, 0.35);
+            --btn-ok-text: #22c55e;
+            --gen-bg: linear-gradient(135deg, rgba(56, 189, 248, 0.12), rgba(139, 92, 246, 0.12));
+            --gen-bg-hover: linear-gradient(135deg, rgba(56, 189, 248, 0.22), rgba(139, 92, 246, 0.2));
+            --gen-border: rgba(56, 189, 248, 0.3);
+            --gen-border-hover: rgba(56, 189, 248, 0.5);
+            --gen-text: #38bdf8;
+            --gen-glow: rgba(56, 189, 248, 0.15);
+            --status-bg: rgba(15, 23, 42, 0.5);
+            --status-border: rgba(148, 163, 184, 0.1);
+            --status-text: rgba(148, 163, 184, 0.45);
+            --status-dot: #22c55e;
+            --shield-color: #38bdf8;
+            --shield-bg: linear-gradient(135deg, rgba(56, 189, 248, 0.1), rgba(139, 92, 246, 0.1));
+            --shield-border: rgba(56, 189, 248, 0.2);
+            --orb1: rgba(56, 189, 248, 0.07);
+            --orb2: rgba(167, 139, 250, 0.055);
+            --orb3: rgba(99, 102, 241, 0.045);
+            --grid: rgba(56, 189, 248, 0.028);
+            --toggle-track: #1e293b;
+            --toggle-thumb: #0f172a;
+            --toggle-icon: #64748b;
+            --input-bg: rgba(15, 23, 42, 0.4);
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text-primary);
+            min-height: 100vh;
+            font-family: 'Share Tech Mono', monospace;
+            overflow-x: hidden;
+            transition: background 0.38s, color 0.38s;
+            line-height: 1.5;
+        }
+
+        body.lang-fa { 
+            font-family: "Vazirmatn", sans-serif; 
+        }
+        body.lang-en { 
+            font-family: "Share Tech Mono", monospace; 
+        }
+
+        .modern-input, 
+        .textarea1, 
+        .endpoint-item, 
+        .api-info-panel, 
+        .option-sublabel {
+            font-family: 'Share Tech Mono', monospace !important;
+        }
+
+        .lang-text-btn,
+        .api-info-title,
+        .generate-btn {
+            font-family: 'Orbitron', sans-serif !important;
+            letter-spacing: 1px;
+        }
+
+        .main-title-group {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2px;
+            text-align: center;
+            margin: 0 auto;
+        }
+
+        .main-title-primary {
+            font-family: 'Orbitron', sans-serif !important;
+            font-size: 1.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            line-height: 1.1;
+            transition: color 0.35s, text-shadow 0.35s;
+        }
+
+        .main-title-secondary {
+            font-family: 'Share Tech Mono', monospace !important;
+            font-size: 0.82rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            color: var(--text-muted);
+            transition: color 0.35s;
+        }
+
+        body.dark .main-title-primary {
+            background: linear-gradient(90deg, #38bdf8 0%, #a78bfa 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 2px 8px rgba(56, 189, 248, 0.35));
+        }
+
+        body.light .main-title-primary {
+            background: linear-gradient(90deg, #0891b2 0%, #7c3aed 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 1px 4px rgba(6, 182, 212, 0.15));
+        }
+
+        body.lang-en .section-title, 
+        body.lang-en .settings-group-title {
+            font-family: 'Orbitron', sans-serif !important;
+            letter-spacing: 1.5px;
+        }
+
+        body.lang-fa .section-title, 
+        body.lang-fa .settings-group-title {
+            font-family: 'Vazirmatn', sans-serif !important;
+            font-weight: 700;
+        }
+
+        .rtl-text { direction: rtl; }
+
+        .container-wrapper {
+            position: relative;
+            z-index: 1;
+            min-height: 100vh;
+        }
+
+        .grid-bg {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+            background-image: linear-gradient(var(--grid) 1px, transparent 1px),
+                              linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+            background-size: 54px 54px;
+            transition: background-image 0.4s;
+        }
+
+        .orb {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(68px);
+            pointer-events: none;
+            z-index: 0;
+            transition: background 0.5s;
+        }
+
+        .orb-1 { width: 280px; height: 280px; top: -60px; left: -40px; background: var(--orb1); }
+        .orb-2 { width: 220px; height: 220px; bottom: -45px; right: -25px; background: var(--orb2); }
+        .orb-3 { width: 150px; height: 150px; top: 42%; left: 58%; background: var(--orb3); }
+
+        .wrapper {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 4rem 1.5rem 2rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        .lang-switcher-text {
+            position: absolute;
+            top: 1.5rem;
+            left: 1.5rem;
+            z-index: 1000;
+        }
+
+        .theme-toggle-container {
+            position: absolute;
+            top: 1.5rem;
+            right: 1.5rem;
+            z-index: 1000;
+        }
+
+        .lang-text-btn {
+            background: var(--btn-bg);
+            border: 1px solid var(--btn-border);
+            border-radius: 6px;
+            color: var(--btn-text);
+            padding: 0.35rem 0.8rem;
+            font-size: 0.85rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .lang-text-btn:hover {
+            background: var(--btn-bg-hover);
+            color: var(--btn-text-hover);
+            box-shadow: 0 0 10px rgba(56, 189, 248, 0.1);
+        }
+
+        .theme-toggle {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 6px 0;
+        }
+
+        .theme-icon {
+            color: var(--toggle-icon);
+            display: flex;
+            transition: opacity 0.3s;
+        }
+
+        .toggle-track {
+            width: 42px;
+            height: 22px;
+            border-radius: 11px;
+            background: var(--toggle-track);
+            position: relative;
+            transition: background 0.35s ease;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.18);
+        }
+
+        .toggle-thumb {
+            position: absolute;
+            top: 2px;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: var(--toggle-thumb);
+            transition: left 0.32s cubic-bezier(0.4,0,0.2,1), box-shadow 0.3s;
+        }
+
+        body.light .toggle-thumb { left: 1px; box-shadow: 0 1px 3px rgba(0,0,0,0.22); }
+        body.dark .toggle-thumb { left: 21px; box-shadow: 0 1px 5px rgba(0,0,0,0.45); }
+        body.light .theme-icon.sun { opacity: 0.8; }
+        body.light .theme-icon.moon { opacity: 0.35; }
+        body.dark .theme-icon.sun { opacity: 0.35; }
+        body.dark .theme-icon.moon { opacity: 0.8; }
+
+        .header {
+            text-align: center;
+            margin-bottom: 2rem;
+            position: relative;
+        }
+
+        .container-columns {
+            display: grid;
+            grid-template-columns: 1.1fr 0.9fr;
+            gap: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .container, .container2 {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.75rem;
+            position: relative;
+            backdrop-filter: blur(10px);
+            transition: border-color 0.35s ease, box-shadow 0.35s ease;
+        }
+
+        .container.active-accent {
+            border-color: var(--border-accent-pub);
+            box-shadow: 0 0 0 1px var(--glow-pub) inset, 0 3px 18px rgba(0,0,0,0.08);
+        }
+
+        .container2.active-accent {
+            border-color: var(--border-accent-priv);
+            box-shadow: 0 0 0 1px var(--glow-priv) inset, 0 3px 18px rgba(0,0,0,0.08);
+        }
+
+        .corner-accent {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            pointer-events: none;
+        }
+
+        .corner-top-left { top: 0; left: 0; border-radius: 12px 0 0 0; }
+        .corner-bottom-right { bottom: 0; right: 0; border-radius: 0 0 12px 0; }
+
+        .container2 .corner-top-left {
+            border-top: 2px solid var(--accent-priv-dim);
+            border-left: 2px solid var(--accent-priv-dim);
+        }
+        .container2 .corner-bottom-right {
+            border-bottom: 2px solid var(--accent-priv-dim);
+            border-right: 2px solid var(--accent-priv-dim);
+        }
+
+        .container .corner-top-left {
+            border-top: 2px solid var(--accent-pub-dim);
+            border-left: 2px solid var(--accent-pub-dim);
+        }
+        .container .corner-bottom-right {
+            border-bottom: 2px solid var(--accent-pub-dim);
+            border-right: 2px solid var(--accent-pub-dim);
+        }
+
+        .section-title {
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 1.25rem;
+            text-align: left;
+        }
+
+        .settings-group-title {
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--accent-priv);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            margin-bottom: 0.875rem;
+            text-align: left;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        button, .convert-btn {
+            width: 100%;
+            padding: 0.85rem 1rem;
+            background: var(--btn-bg);
+            color: var(--btn-text);
+            border: 1px solid var(--btn-border);
+            border-radius: 8px;
+            font-size: 0.95rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        button:hover, .convert-btn:hover {
+            background: var(--btn-bg-hover);
+            color: var(--btn-text-hover);
+            border-color: var(--text-muted);
+        }
+
+        button:disabled, .convert-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+
+        .generate-btn {
+            background: var(--gen-bg);
+            border: 1px solid var(--gen-border);
+            color: var(--gen-text);
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            box-shadow: none;
+        }
+
+        .generate-btn:hover {
+            background: var(--gen-bg-hover);
+            border-color: var(--gen-border-hover);
+            box-shadow: 0 0 20px var(--gen-glow);
+            color: var(--gen-text);
+        }
+
+        .cyber-spinner {
+            display: inline-block;
+            width: 18px;
+            height: 18px;
+            border: 2px solid transparent;
+            border-top-color: var(--gen-text);
+            border-right-color: var(--gen-text);
+            border-radius: 50%;
+            animation: cyber-spin 0.8s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+            position: relative;
+        }
         
-        document.getElementById('generateBtn').addEventListener('click', displayConfig);
-        document.getElementById('copyBtn').addEventListener('click', copyConfig);
-        document.getElementById('downloadBtn').addEventListener('click', downloadConfig);
+        .cyber-spinner::after {
+            content: '';
+            position: absolute;
+            top: -5px; left: -5px; right: -5px; bottom: -5px;
+            border: 1px solid var(--accent-pub-dim);
+            border-radius: 50%;
+            animation: cyber-pulse 1.2s ease-out infinite;
+        }
+
+        @keyframes cyber-spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes cyber-pulse {
+            0% { transform: scale(0.8); opacity: 0.8; }
+            100% { transform: scale(1.4); opacity: 0; }
+        }
+
+        .modern-secondary-btn {
+            background: var(--btn-bg);
+            color: var(--btn-text);
+            border: 1px solid var(--btn-border);
+            font-weight: 500;
+            font-size: 0.8rem;
+            padding: 0.5rem 0.75rem;
+            border-radius: 6px;
+        }
+
+        .modern-secondary-btn:hover {
+            background: var(--btn-bg-hover);
+            color: var(--btn-text-hover);
+        }
+
+        .button-container {
+            display: flex;
+            gap: 0.75rem;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .download-btn {
+            flex: 1;
+            height: 48px;
+            background: var(--btn-bg);
+            color: var(--btn-text);
+            border: 1px solid var(--btn-border);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0.4;
+            pointer-events: none;
+        }
+
+        .download-btn:not(.hidden) {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .download-btn:not(.hidden):hover {
+            background: var(--btn-bg-hover);
+            color: var(--text-primary);
+            border-color: var(--accent-pub);
+            box-shadow: 0 0 10px var(--glow-pub);
+        }
+
+        /* Cyber Radios */
+        .junk-options-row {
+            display: flex;
+            gap: 0.4rem;
+            margin-bottom: 1.25rem;
+        }
+
+        .junk-options-row label {
+            flex: 1;
+        }
+
+        .modern-radio {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.35rem;
+            padding: 0.6rem 0.25rem;
+            background: var(--btn-bg);
+            border: 1px solid var(--btn-border);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.15s ease, border-color 0.15s ease;
+            height: 100%;
+        }
+
+        .modern-radio:hover {
+            background: var(--btn-bg-hover);
+        }
+
+        .modern-radio:has(.radio:checked) {
+            background: var(--glow-priv);
+            border-color: var(--border-accent-priv);
+        }
+
+        .radio-fakeradio {
+            width: 10px;
+            height: 10px;
+            border: 1.5px solid var(--btn-text);
+            border-radius: 50%;
+            position: relative;
+            transition: border-color 0.15s ease;
+            flex-shrink: 0;
+        }
+
+        .radio:checked + .radio-fakeradio {
+            border-color: var(--accent-priv);
+        }
+
+        .radio:checked + .radio-fakeradio::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 4px;
+            height: 4px;
+            background: var(--accent-priv);
+            border-radius: 50%;
+        }
+
+        .option-info {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            gap: 1px;
+        }
+
+        .option-label {
+            color: var(--text-primary);
+            font-size: 0.73rem;
+            font-weight: 700;
+        }
+
+        .option-sublabel {
+            font-size: 0.58rem;
+            color: var(--text-muted);
+        }
+
+        /* Cyber Checkbox */
+        .modern-checkbox {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 1rem;
+            background: var(--glow-priv);
+            border: 1px solid var(--border-accent-priv);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.15s ease, border-color 0.15s ease;
+            margin-bottom: 0.875rem;
+        }
+
+        .modern-checkbox:hover {
+            background: rgba(167, 139, 250, 0.12);
+        }
+
+        .modern-checkbox .checkbox {
+            display: flex;
+            align-items: center;
+            width: 100%;
+        }
+
+        .checkmark {
+            width: 16px;
+            height: 16px;
+            border: 2px solid var(--btn-text);
+            border-radius: 3px;
+            position: relative;
+            transition: all 0.15s ease;
+            flex-shrink: 0;
+        }
+
+        input[type="checkbox"]:checked + .checkmark {
+            background: var(--accent-priv);
+            border-color: var(--accent-priv);
+        }
+
+        input[type="checkbox"]:checked + .checkmark::after {
+            content: '✓';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -52%);
+            color: #fff;
+            font-weight: 700;
+            font-size: 11px;
+            line-height: 1;
+        }
+
+        /* Cyber Inputs styling */
+        .custom-inputs {
+            margin-top: 0.75rem;
+            padding: 1rem;
+            background: var(--input-bg);
+            border-radius: 8px;
+            border: 1px solid var(--border);
+        }
+
+        .custom-inputs-row {
+            display: flex;
+            gap: 0.6rem;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 0.75rem;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.3rem;
+            flex: 1;
+        }
+
+        .input-label {
+            color: var(--text-muted);
+            font-size: 0.75rem;
+            font-weight: 500;
+            text-align: left;
+            text-transform: uppercase;
+        }
         
-        // Download IP list button
-        const downloadIPBtn = document.createElement('button');
-        downloadIPBtn.className = 'btn-download';
-        downloadIPBtn.id = 'downloadIPBtn';
-        downloadIPBtn.textContent = '📥 Download IP List (ips.txt)';
-        downloadIPBtn.style.marginTop = '0.5rem';
-        downloadIPBtn.style.width = '100%';
-        downloadIPBtn.addEventListener('click', downloadIPList);
+        body.lang-fa .input-label {
+            text-align: right;
+        }
+
+        .modern-input {
+            padding: 0.55rem;
+            background: var(--input-bg);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: var(--text-primary);
+            font-size: 0.85rem;
+            transition: border-color 0.15s ease, box-shadow 0.15s ease;
+            width: 100%;
+            text-align: center;
+        }
+
+        .modern-input:focus {
+            outline: none;
+            border-color: var(--accent-pub);
+            box-shadow: 0 0 10px var(--glow-pub);
+        }
+
+        .container2 .modern-input:focus {
+            border-color: var(--accent-priv);
+            box-shadow: 0 0 10px var(--glow-priv);
+        }
+
+        /* Clean IPs List panel style */
+        .endpoint-list-box {
+            max-height: 160px;
+            overflow-y: auto;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            background: var(--input-bg);
+            padding: 0.25rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .endpoint-list-box::-webkit-scrollbar { width: 4px; }
+        .endpoint-list-box::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+        .endpoint-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem 0.75rem;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.15s, color 0.15s;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-bottom: 2px;
+            text-align: left;
+        }
+
+        .endpoint-item:hover {
+            background: var(--btn-bg-hover);
+            color: var(--text-primary);
+        }
+
+        .endpoint-item.selected {
+            background: var(--glow-pub);
+            border: 1px solid var(--border-accent-pub);
+            color: var(--accent-pub);
+            font-weight: 700;
+        }
+
+        .endpoint-tick {
+            font-size: 0.95rem;
+            color: var(--status-dot);
+            opacity: 0;
+            transition: opacity 0.15s;
+        }
+
+        .endpoint-item.selected .endpoint-tick { opacity: 1; }
+
+        /* Output Textarea styled as mechanical terminal console - Expandable dynamically */
+        .textarea1 {
+            width: 100%;
+            height: 80px;
+            background: var(--input-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1.2rem;
+            color: var(--text-key);
+            font-size: 0.83rem;
+            resize: vertical;
+            margin-bottom: 0.5rem;
+            transition: height 0.4s cubic-bezier(0.19, 1, 0.22, 1), border-color 0.15s ease, box-shadow 0.15s ease;
+            line-height: 1.6;
+            overflow-y: auto;
+        }
+
+        .textarea1.expanded {
+            height: 380px;
+        }
+
+        .textarea1:focus {
+            outline: none;
+            border-color: var(--accent-pub);
+            box-shadow: 0 0 10px var(--glow-pub);
+        }
+
+        /* Amnezia 3.0 I1-I9 Inputs Grid */
+        .amnezia30-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.4rem 0.8rem;
+            margin-top: 0.5rem;
+        }
+
+        .amnezia30-grid .input-row {
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .amnezia30-grid .input-row label {
+            min-width: 28px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: var(--accent-priv);
+        }
+
+        .amnezia30-grid .input-row .modern-input {
+            font-size: 0.7rem;
+            padding: 0.3rem 0.4rem;
+            text-align: left;
+        }
+
+        .amnezia15-inputs-panel {
+            border-color: var(--border-accent-priv);
+            border-width: 1px;
+        }
+
+        /* API Account panel custom matrix styling */
+        .api-info-panel {
+            padding: 0.75rem 1rem;
+            background: var(--input-bg);
+            border-radius: 6px;
+            border: 1px solid var(--border-accent-pub);
+            box-shadow: 0 0 8px var(--glow-pub);
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-bottom: 1rem;
+            text-align: left !important;
+            direction: ltr !important;
+        }
+
+        .api-info-title {
+            font-weight: 700;
+            margin-bottom: 0.4rem;
+            color: var(--accent-pub);
+            font-size: 0.8rem;
+            text-transform: uppercase;
+        }
+
+        .api-info-row {
+            margin-bottom: 0.25rem;
+            word-break: break-all;
+        }
+
+        /* Dynamic Footer with signature above social links & reduced margin-top */
+        .footer-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 0.25rem;
+            justify-content: center;
+            gap: 0.35rem;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 1.5rem;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .donation-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 38px;
+            height: 38px;
+            background: var(--btn-bg);
+            color: var(--btn-text);
+            border: 1px solid var(--btn-border);
+            border-radius: 50%;
+            transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease, transform 0.2s;
+            cursor: pointer;
+            padding: 0;
+        }
+
+        .donation-btn:hover {
+            background: var(--btn-bg-hover);
+            color: var(--btn-text-hover);
+            border-color: var(--accent-pub);
+            box-shadow: 0 0 10px var(--glow-pub);
+            transform: translateY(-2px);
+        }
+
+        .credit-text {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            letter-spacing: 0.05em;
+            text-align: center;
+            font-family: system-ui, -apple-system, sans-serif;
+            font-weight: 600;
+            margin-bottom: 0.1rem;
+        }
+
+        /* Social icons size & invert filters for Dark/Light mode compatible with black Icons8 png */
+        .social-icon {
+            width: 22px;
+            height: 22px;
+            transition: filter 0.3s;
+        }
+        body.dark .social-icon {
+            filter: invert(1) brightness(2.5);
+        }
+        body.light .social-icon {
+            filter: none;
+        }
+
+        /* Fixed bottom-left trigger button style */
+        .cyber-download-trigger {
+            position: fixed;
+            bottom: 1.5rem;
+            left: 1.5rem;
+            z-index: 1000;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            color: var(--text-primary);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            transition: border-color 0.3s, box-shadow 0.3s, transform 0.2s, background 0.3s;
+        }
+        .cyber-download-trigger:hover {
+            border-color: var(--border-accent-pub);
+            box-shadow: 0 0 12px var(--glow-pub);
+            transform: translateY(-2px);
+            background: var(--btn-bg-hover);
+        }
+
+        /* Cyber Modal Overlay */
+        .cyber-modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(8px);
+            z-index: 2000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+        .cyber-modal-overlay.open {
+            opacity: 1;
+            pointer-events: auto;
+        }
         
-        // Refresh IP list button
-        const refreshIPBtn = document.createElement('button');
-        refreshIPBtn.className = 'btn-copy';
-        refreshIPBtn.id = 'refreshIPBtn';
-        refreshIPBtn.textContent = '🔄 Refresh IP List';
-        refreshIPBtn.style.marginTop = '0.5rem';
-        refreshIPBtn.style.width = '100%';
-        refreshIPBtn.addEventListener('click', refreshIPList);
+        /* Cyber Modal Card */
+        .cyber-modal {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            width: 320px;
+            max-width: 90%;
+            position: relative;
+            transform: scale(0.9);
+            transition: transform 0.3s cubic-bezier(0.19, 1, 0.22, 1);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        .cyber-modal-overlay.open .cyber-modal {
+            transform: scale(1);
+        }
         
-        // Insert buttons
-        const generateBtn = document.getElementById('generateBtn');
-        generateBtn.parentNode.insertBefore(downloadIPBtn, generateBtn.nextSibling);
-        generateBtn.parentNode.insertBefore(refreshIPBtn, generateBtn.nextSibling);
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.25rem;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 0.5rem;
+        }
+        .modal-header .modal-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--accent-pub);
+            letter-spacing: 1px;
+        }
+        .modal-close-btn {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 24px;
+            height: 24px;
+            transition: color 0.2s;
+        }
+        .modal-close-btn:hover {
+            color: var(--text-primary);
+        }
         
-        document.getElementById('cleanIP').addEventListener('change', function() {
-            const customField = document.getElementById('customIP');
-            if (this.value === 'custom') {
-                customField.style.display = 'inline-block';
-                customField.focus();
-            } else {
-                customField.style.display = 'inline-block';
-                customField.value = '';
-            }
-        });
+        .modal-body {
+            display: flex;
+            flex-direction: column;
+            gap: 0.85rem;
+        }
         
-        // Add IP count
-        const label = document.querySelector('.form-group label[for="cleanIP"]');
-        const countDisplay = document.createElement('span');
-        countDisplay.id = 'ipCount';
-        countDisplay.className = 'badge';
-        countDisplay.style.marginLeft = '0.5rem';
-        countDisplay.textContent = '(Loading...)';
-        label.appendChild(countDisplay);
-    });
-</script>
-</body>
-</html>
+        /* Modal Link Items */
+        .modal-link-item {
+            display: flex;
+            align-items: center;
+            gap: 0.85rem;
+            padding: 0.75rem 1rem;
+            background: var(--input-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            text-decoration: none;
+            color: var(--text-primary);
+            transition: border-color 0.3s, box-shadow 0.3s, transform 0.2s;
+        }
+        .modal-link-item:hover {
+            border-color: var(--border-accent-pub);
+            box-shadow: 0 0 10px var(--glow-pub);
+            transform: translateX(3px);
+        }
+        
+        .modal-icon {
+            width: 28px;
+            height: 28px;
+            transition: filter 0.3s;
+        }
+        body.dark .modal-icon {
+            filter: invert(1) brightness(2.5);
+        }
+        body.light .modal-icon {
+            filter: none;
+        }
+        
+        .modal-link-text {
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .hidden, .hidden-input, .radio { display: none; }
+
+        @media (max-width: 768px) {
+            .wrapper { padding: 3.5rem 1rem 1.5rem; }
+            .lang-switcher-text { top: 1rem; left: 1rem; }
+            .theme-toggle-container { top: 1rem; right: 1rem; }
+            .cyber-download-trigger { bottom: 1rem; left: 1rem; }
+            .container-columns { display: flex; flex-direction: column; gap: 1.25rem; }
+            .container, .container2 { padding: 1.25rem; }
+            .main-title-primary { font-size: 1.5rem; }
+            .main-title-secondary { font-size: 0.75rem; letter-spacing: 3px; }
+            .amnezia30-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body class="lang-fa dark">
+  <div class="container-wrapper">
+    <div class="grid-bg"></div>
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+
+    <div class="wrapper">
+      <!-- Absolute Corner Controls -->
+      <div class="lang-switcher-text">
+          <button id="lang-toggle-btn" class="lang-text-btn" onclick="toggleLanguage()">En</button>
+      </div>
+
+      <div class="theme-toggle-container">
+          <button class="theme-toggle" id="themeToggle">
+            <span class="theme-icon sun">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/>
+                <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+                <line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/>
+                <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+              </svg>
+            </span>
+            <div class="toggle-track">
+              <div class="toggle-thumb"></div>
+            </div>
+            <span class="theme-icon moon">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+              </svg>
+            </span>
+          </button>
+      </div>
+
+      <!-- Main Header Title -->
+      <div class="header">
+          <div class="main-title-group">
+              <h1 class="main-title-primary">AMNEZIA VPN</h1>
+              <span class="main-title-secondary">CONFIG GENERATOR</span>
+          </div>
+      </div>
+      
+      <div class="container-columns">
+          <!-- Right Column: Settings Container (Inputs & Customization) -->
+          <div class="container2 active-accent">
+              <div class="corner-accent corner-top-left"></div>
+              <div class="corner-accent corner-bottom-right"></div>
+
+              <div class="section-title" data-i18n="advanced_settings">تنظیمات پیشرفته AmneziaWG</div>
+
+              <!-- Custom Endpoint Selection & MTU Layout -->
+              <div class="custom-inputs" style="margin-bottom: 1.25rem;">
+                  <!-- Endpoint List Box populated dynamically with selection ticks -->
+                  <div id="endpoint_list_box" class="endpoint-list-box">
+                      <div id="loading_ips_msg" style="padding: 1rem; text-align: center; color: var(--text-muted); font-size: 0.8rem;" data-i18n="loading_ips">در حال دریافت ای پی ها ...</div>
+                  </div>
+
+                  <div style="display: flex; gap: 0.75rem;">
+                      <div style="flex: 2; display: flex; flex-direction: column; gap: 0.25rem;">
+                          <label class="input-label" style="font-size: 0.75rem;">Endpoint</label>
+                          <input id="custom_endpoint" class="modern-input" style="text-align: left;" placeholder="engage.cloudflareclient.com:2408">
+                      </div>
+                      <div style="flex: 1; display: flex; flex-direction: column; gap: 0.25rem;">
+                          <label class="input-label" style="font-size: 0.75rem;">MTU</label>
+                          <input id="custom_mtu" class="modern-input" placeholder="1280" type="number">
+                      </div>
+                  </div>
+              </div>
+
+              <div class="musor1">
+                  <div class="settings-group-title" data-i18n="junk_packet_settings">
+                    <span style="width: 5px; height: 5px; border-radius: 50%; background: var(--accent-priv); display: inline-block;"></span>
+                    تنظیمات پکت‌ها (Junk Packets)
+                  </div>
+
+                  <!-- Three Radio Options Aligned in One Row -->
+                  <div class="junk-options-row">
+                      <label>
+                        <div class="checkbox modern-radio">
+                          <input type="radio" id="junk1" name="junk" class="radio" checked/>
+                          <span class="radio-fakeradio"></span>
+                          <div class="option-info">
+                              <span class="option-label" data-i18n="light_option">سبک</span>
+                              <span class="option-sublabel">jc=3, jmin=1, jmax=3</span>
+                          </div>
+                        </div>
+                      </label>
+                      
+                      <label>
+                        <div class="checkbox modern-radio">
+                          <input type="radio" id="junk2" name="junk" class="radio" />
+                          <span class="radio-fakeradio"></span>
+                          <div class="option-info">
+                              <span class="option-label" data-i18n="heavy_option">سنگین</span>
+                              <span class="option-sublabel">jc=5, jmin=10, jmax=40</span>
+                          </div>
+                        </div>
+                      </label>
+                      
+                      <label>
+                        <div class="checkbox modern-radio">
+                          <input type="radio" id="junk3" name="junk" class="radio" />
+                          <span class="radio-fakeradio"></span>
+                          <div class="option-info">
+                              <span class="option-label" data-i18n="custom_settings">دلخواه</span>
+                              <span class="option-sublabel">سفارشی</span>
+                          </div>
+                        </div>
+                      </label>
+                  </div>
+
+                  <!-- Amnezia 3.0 Toggle -->
+                  <label class="modern-checkbox" id="amnezia30-toggle-label">
+                      <div class="checkbox">
+                          <input type="checkbox" id="enableAmnezia30" class="hidden"/>
+                          <span class="checkmark"></span>
+                          <span class="option-label amnezia30-label" style="margin-right: 8px; margin-left: 8px;" data-i18n="enable_30">فعالسازی پارامترهای آمینزیا 3.0 (I1-I9)</span>
+                      </div>
+                  </label>
+              
+                  <!-- Custom Junk Packet Inputs (Horizontal Flex Row) -->
+                  <div id="standard-junk-inputs" class="custom-inputs hidden">
+                      <div class="custom-inputs-row">
+                          <div class="input-group">
+                              <label class="input-label">jc</label>
+                              <input id="jc1" class="modern-input" type="number" placeholder="3">
+                          </div>
+                          <div class="input-group">
+                              <label class="input-label">jmin</label>
+                              <input id="jmin1" class="modern-input" type="number" placeholder="1">
+                          </div>
+                          <div class="input-group">
+                              <label class="input-label">jmax</label>
+                              <input id="jmax1" class="modern-input" type="number" placeholder="3">
+                          </div>
+                      </div>
+                      <button class="randombtn modern-secondary-btn" id="randomJunkBtn" style="width: 100%;">
+                          <span data-i18n="generate_random">تولید مقادیر تصادفی</span>
+                      </button>
+                  </div>
+
+                  <!-- Amnezia 3.0 I1-I9 Inputs -->
+                  <div id="amnezia30-inputs" class="custom-inputs hidden amnezia15-inputs-panel">
+                      <div class="settings-group-title amnezia15-group-title" data-i18n="amnezia_params">پارامترهای آمینزیا نسخه 3.0</div>
+                      <small class="amnezia15-doc" style="display: block; margin-bottom: 0.5rem; color: var(--text-muted); font-size: 0.7rem;">
+                          <span data-i18n="amnezia30_note_prefix">برای جزییات بیشتر مستندات آمینزیا را </span>
+                          <a target="_blank" href="https://docs.amnezia.org/documentation/instructions/new-amneziawg-selfhosted/" style="color: var(--accent-pub);">مطالعه کنید</a>.
+                      </small>
+                      <div class="amnezia30-grid">
+                          <div class="input-row">
+                              <label>I1 =</label>
+                              <input id="i1_1" class="modern-input" placeholder="مقدار I1">
+                          </div>
+                          <div class="input-row">
+                              <label>I2 =</label>
+                              <input id="i2_1" class="modern-input" placeholder="مقدار I2">
+                          </div>
+                          <div class="input-row">
+                              <label>I3 =</label>
+                              <input id="i3_1" class="modern-input" placeholder="مقدار I3">
+                          </div>
+                          <div class="input-row">
+                              <label>I4 =</label>
+                              <input id="i4_1" class="modern-input" placeholder="مقدار I4">
+                          </div>
+                          <div class="input-row">
+                              <label>I5 =</label>
+                              <input id="i5_1" class="modern-input" placeholder="مقدار I5">
+                          </div>
+                          <div class="input-row">
+                              <label>I6 =</label>
+                              <input id="i6_1" class="modern-input" placeholder="مقدار I6">
+                          </div>
+                          <div class="input-row">
+                              <label>I7 =</label>
+                              <input id="i7_1" class="modern-input" placeholder="مقدار I7">
+                          </div>
+                          <div class="input-row">
+                              <label>I8 =</label>
+                              <input id="i8_1" class="modern-input" placeholder="مقدار I8">
+                          </div>
+                          <div class="input-row">
+                              <label>I9 =</label>
+                              <input id="i9_1" class="modern-input" placeholder="مقدار I9">
+                          </div>
+                      </div>
+                  </div>
+              </div>
+          </div>
+
+          <!-- Left Column: Action & Output Container -->
+          <div class="container active-accent">
+              <div class="corner-accent corner-top-left"></div>
+              <div class="corner-accent corner-bottom-right"></div>
+
+              <div class="section-title" data-i18n="section_configuration">ساخت و خروجی کانفیگ</div>
+
+              <!-- Single Trigger Button -->
+              <button id="main_gen_btn" onclick="generateConfig()" class="convert-btn generate-btn" disabled>
+                  <span class="refresh-icon">
+                      <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                          <path d="M23 4v6h-6"/><path d="M1 20v-6h6"/>
+                          <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/>
+                      </svg>
+                  </span>
+                  <span id="gen_btn_inner_text" data-i18n="fetch_warp">ساخت کانفیگ AmneziaWG</span>
+              </button>
+              
+              <textarea id="yamlOutput" class="textarea1" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
+                          placeholder="کانفیگ ساخته شده اینجا نمایش داده می‌شود..." data-i18n-placeholder="converted_placeholder" readonly></textarea>
+
+              <!-- API Account Information Section (Forced Left Aligned & LTR English) -->
+              <div id="account_info_container" class="api-info-panel hidden">
+                  <div class="api-info-title">Account Details (WARP API)</div>
+                  <div id="account_details_list"></div>
+              </div>
+
+              <div class="button-container">
+                  <!-- Icon Only Download Button -->
+                  <button class="download-btn hidden" id="downloadBtn" title="Download (.conf)">
+                      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                          <polyline points="7 10 12 15 17 10"></polyline>
+                          <line x1="12" y1="15" x2="12" y2="3"></line>
+                      </svg>
+                  </button>
+                  <!-- Icon Only Copy Button -->
+                  <button class="download-btn hidden" id="copyBtn" title="Copy To Clipboard">
+                      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                          <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                          <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                      </svg>
+                  </button>
+              </div>
+          </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bottom-Left Download Trigger Button -->
+  <button class="cyber-download-trigger" id="downloadTriggerBtn" onclick="toggleDownloadPopup()" title="Download Amnezia VPN">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+          <polyline points="7 10 12 15 17 10"></polyline>
+          <line x1="12" y1="15" x2="12" y2="3"></line>
+      </svg>
+  </button>
+
+  <!-- Cyber Download Popup Modal Overlay -->
+  <div class="cyber-modal-overlay" id="downloadModal" onclick="closeDownloadPopupOutside(event)">
+      <div class="cyber-modal">
+          <div class="corner-accent corner-top-left"></div>
+          <div class="corner-accent corner-bottom-right"></div>
+          
+          <div class="modal-header">
+              <span class="modal-title">GET AMNEZIA App</span>
+              <button class="modal-close-btn" onclick="toggleDownloadPopup()">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <line x1="18" y1="6" x2="6" y2="18"></line>
+                      <line x1="6" y1="6" x2="18" y2="18"></line>
+                  </svg>
+              </button>
+          </div>
+          
+          <div class="modal-body">
+              <a href="https://play.google.com/store/apps/details?id=org.amnezia.vpn" target="_blank" class="modal-link-item">
+                  <img src="https://img.icons8.com/?size=100&id=L1ws9zn2uD01&format=png&color=000000" class="modal-icon" alt="Google Play">
+                  <span class="modal-link-text">Amnezia VPN android</span>
+              </a>
+              
+              <a href="https://apps.apple.com/app/amnezia-vpn/id1605311531" target="_blank" class="modal-link-item">
+                  <img src="https://img.icons8.com/?size=100&id=4PbFeZOKAc61&format=png&color=000000" class="modal-icon" alt="App Store">
+                  <span class="modal-link-text">Amnezia VPN iOS</span>
+              </a>
+          </div>
+      </div>
+  </div>
+
+  <div class="footer-container">
+    <div class="credit-text">پخت و پز اقا جواد</div>
+  </div>
+
+  <script>
+    // ── Javascript Logic ─────────────────────────────────────── */
+    // Amnezia 3.0 keys (I1-I9)
+    const AMNEZIA_KEYS = ['jc', 'jmin', 'jmax', 's1', 's2', 'h1', 'h2', 'h3', 'h4'];
+    const AMNEZIA30_KEYS = ['i1', 'i2', 'i3', 'i4', 'i5', 'i6', 'i7', 'i8', 'i9'];
+
+    const LANG_PACKS = {
+      fa: {
+        section_configuration: "ساخت و خروجی کانفیگ",
+        convert: "ساخت کانفیگ",
+        converted_placeholder: "کانفیگ ساخته شده اینجا نمایش داده می‌شود...",
+        advanced_settings: "تنظیمات پیشرفته AmneziaWG",
+        junk_packet_settings: "تنظیمات پکت‌ها (Junk Packets)",
+        enable_30: "فعالسازی پارامترهای آمینزیا 3.0 (I1-I9)",
+        light_option: "سبک",
+        heavy_option: "سنگین",
+        custom_settings: "دلخواه",
+        generate_random: "تولید مقادیر تصادفی",
+        amnezia_params: "پارامترهای آمینزیا v3.0",
+        fetching_warp: "در حال دریافت و تحلیل کانفیگ...",
+        warp_fetched: "کانفیگ AmneziaWG با موفقیت ساخته شد!",
+        fetch_warp: "ساخت کانفیگ AmneziaWG",
+        config_copied: "کانفیگ کپی شد!",
+        nothing_to_copy: "چیزی برای کپی کردن وجود ندارد.",
+        select_ip_placeholder: "-- انتخاب آی‌پی تمیز کلودفلر --",
+        loading_ips: "در حال دریافت ای پی ها...",
+        amnezia30_note_prefix: "برای جزییات بیشتر مستندات آمینزیا را "
+      },
+      en: {
+        section_configuration: "Generate & Output",
+        convert: "Generate Config",
+        converted_placeholder: "Generated configuration will appear here...",
+        advanced_settings: "AmneziaWG Advanced Settings",
+        junk_packet_settings: "Junk Packet Settings",
+        enable_30: "Enable Amnezia 3.0 (I1-I9)",
+        light_option: "Light",
+        heavy_option: "Heavy",
+        custom_settings: "Custom",
+        generate_random: "Generate Random Settings",
+        amnezia_params: "Amnezia 3.0 Parameters",
+        fetching_warp: "Fetching base configuration...",
+        warp_fetched: "AmneziaWG config generated successfully!",
+        fetch_warp: "Generate AmneziaWG Config",
+        config_copied: "Configuration copied!",
+        nothing_to_copy: "Nothing to copy!",
+        select_ip_placeholder: "-- Select Clean Cloudflare IP --",
+        loading_ips: "Fetching clean IPs...",
+        amnezia30_note_prefix: "For more details, check the Amnezia "
+      }
+    };
+
+    let proxyList = [];
+    let currentLang = localStorage.getItem("lang") || "fa";
+
+    const getById = (id) => document.getElementById(id);
+    const getBySelector = (selector) => document.querySelector(selector);
+    const getAllBySelector = (selector) => document.querySelectorAll(selector);
+
+    const elements = {
+      yamlOutput: getById('yamlOutput'),
+      downloadBtn: getById('downloadBtn'),
+      copyBtn: getById('copyBtn')
+    };
+
+    // Modal Control functions
+    function toggleDownloadPopup() {
+      const modal = getById('downloadModal');
+      modal.classList.toggle('open');
+    }
+
+    function closeDownloadPopupOutside(event) {
+      const modal = getById('downloadModal');
+      if (event.target === modal) {
+        modal.classList.remove('open');
+      }
+    }
+
+    // Futuristic Cyberpunk Toast Notifications
+    function showNotification(message, type = 'success') {
+      document.querySelectorAll('.notification').forEach(el => el.remove());
+
+      const notification = document.createElement('div');
+      notification.className = `notification ${type}`;
+      
+      if (currentLang === 'fa') {
+        notification.classList.add('rtl-text');
+      }
+
+      notification.textContent = message;
+      
+      const isDark = document.body.classList.contains('dark');
+      
+      // Cyberpunk glowing configurations for toasts
+      const styleConfig = {
+        success: {
+          bg: isDark ? 'rgba(6, 78, 59, 0.85)' : 'rgba(209, 250, 229, 0.95)',
+          border: isDark ? '#10b981' : '#059669',
+          shadow: isDark ? '0 0 15px rgba(16, 185, 129, 0.4)' : '0 4px 12px rgba(5, 150, 105, 0.15)',
+          text: isDark ? '#34d399' : '#065f46'
+        },
+        error: {
+          bg: isDark ? 'rgba(127, 29, 29, 0.85)' : 'rgba(254, 226, 226, 0.95)',
+          border: isDark ? '#ef4444' : '#dc2626',
+          shadow: isDark ? '0 0 15px rgba(239, 68, 68, 0.4)' : '0 4px 12px rgba(220, 38, 38, 0.15)',
+          text: isDark ? '#f87171' : '#991b1b'
+        },
+        info: {
+          bg: isDark ? 'rgba(30, 58, 138, 0.85)' : 'rgba(219, 234, 254, 0.95)',
+          border: isDark ? '#3b82f6' : '#2563eb',
+          shadow: isDark ? '0 0 15px rgba(59, 130, 246, 0.4)' : '0 4px 12px rgba(37, 99, 235, 0.15)',
+          text: isDark ? '#60a5fa' : '#1e40af'
+        }
+      };
+      
+      const currentStyle = styleConfig[type] || styleConfig.success;
+
+      Object.assign(notification.style, {
+        position: 'fixed',
+        top: '25px',
+        right: currentLang === 'fa' ? 'auto' : '25px',
+        left: currentLang === 'fa' ? '25px' : 'auto',
+        padding: '0.85rem 1.5rem',
+        color: currentStyle.text,
+        fontWeight: '700',
+        fontSize: '13px',
+        letterSpacing: '0.5px',
+        zIndex: '10000',
+        opacity: '0',
+        transform: 'translateY(-20px)',
+        transition: 'all 0.3s cubic-bezier(0.19, 1, 0.22, 1)',
+        backdropFilter: 'blur(12px)',
+        backgroundColor: currentStyle.bg,
+        border: `1px solid ${currentStyle.border}`,
+        boxShadow: currentStyle.shadow,
+        borderRadius: '4px',
+        fontFamily: "'Share Tech Mono', monospace"
+      });
+
+      document.body.appendChild(notification);
+
+      setTimeout(() => {
+        notification.style.opacity = '1';
+        notification.style.transform = 'translateY(0)';
+      }, 10);
+
+      setTimeout(() => {
+        notification.style.opacity = '0';
+        notification.style.transform = 'translateY(-20px)';
+        setTimeout(() => notification.remove(), 300);
+      }, 3000);
+    }
+
+    const getRandomInt = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
+
+    // Dynamic fetching of IP.txt
+    async function fetchEndpointIPs() {
+      const genBtn = getById('main_gen_btn');
+      if (genBtn) genBtn.disabled = true;
+
+      try {
+        const response = await fetch('IP.txt');
+        if (!response.ok) throw new Error();
+        const text = await response.text();
+
+        const ips = text
+          .split('\n')
+          .map(ip => ip.trim())
+          .filter(ip => ip.length > 0 && !ip.startsWith('#'));
+
+        if (ips.length > 0) {
+          populateIPBox(ips);
+          return;
+        }
+      } catch (err) {
+        console.warn('Could not load dynamic IPs locally, trying fallback...');
+
+        try {
+          const fallbackResponse = await fetch(
+            'https://raw.githubusercontent.com/DarknessShade/Amnezia-VPN-Config/main/IP.txt',
+          );
+          if (!fallbackResponse.ok) throw new Error();
+          const text = await fallbackResponse.text();
+          const ips = text
+            .split('\n')
+            .map(ip => ip.trim())
+            .filter(ip => ip.length > 0 && !ip.startsWith('#'));
+
+          if (ips.length > 0) {
+            populateIPBox(ips);
+            return;
+          }
+        } catch (fallbackErr) {
+          console.error('All IP fetch attempts failed.', fallbackErr);
+        }
+
+        getById('endpoint_list_box').innerHTML = `
+          <div style="padding: 1rem; text-align: center; color: var(--danger); font-size: 0.8rem; font-weight: bold;">
+              ${currentLang === 'fa' ? 'صفحه رو بروزرسانی کنید، آی‌پی یافت نشد' : 'IP not found, please refresh the page'}
+          </div>
+        `;
+        showNotification(
+          currentLang === 'fa'
+            ? 'صفحه رو بروزرسانی کنید، آی‌پی یافت نشد'
+            : 'IP not found, please refresh the page',
+          'error',
+        );
+      }
+    }
+
+    // Creates interactive items with selection ticks
+    function populateIPBox(ips) {
+      const listContainer = getById('endpoint_list_box');
+      listContainer.innerHTML = '';
+      
+      ips.forEach((ip, index) => {
+        const item = document.createElement('div');
+        item.className = 'endpoint-item';
+        item.setAttribute('data-ip', ip);
+        
+        if (index === 0) {
+            item.classList.add('selected');
+            getById('custom_endpoint').value = ip;
+        }
+        
+        item.onclick = function() {
+            getAllBySelector('.endpoint-item').forEach(el => el.classList.remove('selected'));
+            item.classList.add('selected');
+            getById('custom_endpoint').value = ip;
+        };
+
+        const ipSpan = document.createElement('span');
+        ipSpan.className = 'endpoint-ip';
+        ipSpan.textContent = ip;
+
+        const tickSpan = document.createElement('span');
+        tickSpan.className = 'endpoint-tick';
+        tickSpan.textContent = '✓';
+
+        item.appendChild(ipSpan);
+        item.appendChild(tickSpan);
+        listContainer.appendChild(item);
+      });
+
+      const genBtn = getById('main_gen_btn');
+      if (genBtn) genBtn.disabled = false;
+    }
+
+    // Generates date and hour formatted file name
+    function generateFormattedFileName() {
+        const now = new Date();
+        const year = now.getFullYear();
+        const month = now.getMonth() + 1;
+        const day = now.getDate();
+        const hours = now.getHours();
+        const minutes = String(now.getMinutes()).padStart(2, '0');
+        
+        return `Configwireguard${year}-${month}-${day}_${hours}-${minutes}.conf`;
+    }
+
+    // Multi-API Fetching Logic with Rotation and Fallback (4 endpoints)
+    async function fetchFromAPIs() {
+      const endpoints = [
+        'https://warp.configwireguard.workers.dev/',
+        'https://warp.configwireguard2.workers.dev/',
+        'https://warp.configwireguard3.workers.dev/',
+        'https://warp.configwireguard4.workers.dev/'
+      ];
+      
+      const shuffled = [...endpoints].sort(() => Math.random() - 0.5);
+      
+      for (const url of shuffled) {
+        try {
+          let response;
+          try {
+            response = await fetch(url);
+          } catch (directErr) {
+            response = await fetch('https://api.allorigins.win/raw?url=' + encodeURIComponent(url));
+          }
+          
+          if (!response.ok) continue;
+          const rawText = await response.text();
+          
+          let parsedJson = null;
+          let configText = '';
+          try {
+            parsedJson = JSON.parse(rawText);
+            configText = parsedJson.config || rawText;
+          } catch (jsonErr) {
+            configText = rawText;
+          }
+          
+          return { parsedJson, configText };
+        } catch (e) {
+          console.warn(`Failed to fetch from endpoint: ${url}`, e);
+        }
+      }
+      throw new Error('All API endpoints failed.');
+    }
+
+    async function generateConfig() {
+      const genBtn = getById('main_gen_btn');
+      const genTextSpan = getById('gen_btn_inner_text');
