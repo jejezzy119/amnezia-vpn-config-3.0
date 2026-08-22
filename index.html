@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>تولید کانفیگ AmneziaWG 3.0</title>
 <style>
-    /* ===== تم مدرن و تاریک - نسخه بهبودیافته ===== */
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
     
     * {
@@ -17,12 +16,11 @@
     body {
         font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
         min-height: 100vh;
-        background: #0a0a14;
+        background: #08080f;
         background-image: 
-            radial-gradient(ellipse at 20% 50%, rgba(88, 101, 242, 0.12) 0%, transparent 50%),
-            radial-gradient(ellipse at 80% 20%, rgba(139, 92, 246, 0.08) 0%, transparent 40%),
-            radial-gradient(ellipse at 50% 100%, rgba(236, 72, 153, 0.06) 0%, transparent 40%),
-            linear-gradient(180deg, #0a0a14 0%, #141425 100%);
+            radial-gradient(ellipse at 15% 40%, rgba(88, 101, 242, 0.15) 0%, transparent 55%),
+            radial-gradient(ellipse at 85% 60%, rgba(139, 92, 246, 0.10) 0%, transparent 45%),
+            radial-gradient(ellipse at 50% 100%, rgba(236, 72, 153, 0.06) 0%, transparent 40%);
         padding: 2rem;
         display: flex;
         justify-content: center;
@@ -32,7 +30,7 @@
         position: relative;
     }
 
-    /* افکت پس‌زمینه با نقطه‌های ریز */
+    /* پس‌زمینه با نقطه‌های ریز */
     body::before {
         content: '';
         position: fixed;
@@ -41,31 +39,44 @@
         right: 0;
         bottom: 0;
         background-image: 
-            radial-gradient(circle at 1px 1px, rgba(255, 255, 255, 0.03) 1px, transparent 0);
-        background-size: 24px 24px;
+            radial-gradient(circle at 1px 1px, rgba(255, 255, 255, 0.04) 1px, transparent 0);
+        background-size: 28px 28px;
+        pointer-events: none;
+        z-index: 0;
+    }
+
+    /* پس‌زمینه دوم برای عمق بیشتر */
+    body::after {
+        content: '';
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: 
+            linear-gradient(180deg, rgba(8, 8, 15, 0.6) 0%, transparent 40%, transparent 60%, rgba(8, 8, 15, 0.6) 100%);
         pointer-events: none;
         z-index: 0;
     }
 
     .container {
-        background: rgba(16, 16, 30, 0.85);
-        backdrop-filter: blur(20px);
-        -webkit-backdrop-filter: blur(20px);
+        background: rgba(16, 16, 30, 0.92);
+        backdrop-filter: blur(24px);
+        -webkit-backdrop-filter: blur(24px);
         border: 1px solid rgba(255, 255, 255, 0.06);
         border-radius: 24px;
-        padding: 3rem;
+        padding: 2.8rem;
         max-width: 920px;
         width: 100%;
         position: relative;
         z-index: 1;
         box-shadow: 
-            0 25px 80px rgba(0, 0, 0, 0.7),
+            0 30px 80px rgba(0, 0, 0, 0.8),
             0 0 0 1px rgba(255, 255, 255, 0.03) inset,
-            0 0 40px rgba(88, 101, 242, 0.05);
-        transition: all 0.3s ease;
+            0 0 60px rgba(88, 101, 242, 0.06);
     }
 
-    /* حاشیه‌های درخشان در حالت فوکوس */
+    /* حاشیه درخشان در هاور */
     .container::before {
         content: '';
         position: absolute;
@@ -74,10 +85,10 @@
         right: -1px;
         bottom: -1px;
         border-radius: 24px;
-        background: linear-gradient(135deg, rgba(88, 101, 242, 0.1), transparent 40%, transparent 60%, rgba(139, 92, 246, 0.1));
+        background: linear-gradient(135deg, rgba(88, 101, 242, 0.15), transparent 35%, transparent 65%, rgba(139, 92, 246, 0.15));
         z-index: -1;
         opacity: 0;
-        transition: opacity 0.4s ease;
+        transition: opacity 0.5s ease;
     }
 
     .container:hover::before {
@@ -86,8 +97,8 @@
 
     /* ===== هدر ===== */
     .header {
-        margin-bottom: 2.8rem;
-        padding-bottom: 1.8rem;
+        margin-bottom: 2.5rem;
+        padding-bottom: 1.5rem;
         border-bottom: 1px solid rgba(255, 255, 255, 0.05);
         display: flex;
         justify-content: space-between;
@@ -97,21 +108,20 @@
     }
 
     .header-left h1 {
-        font-size: 2.2rem;
+        font-size: 2rem;
         font-weight: 700;
         letter-spacing: -0.5px;
         background: linear-gradient(135deg, #818cf8, #a78bfa, #c084fc);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
-        margin-bottom: 0.4rem;
+        margin-bottom: 0.3rem;
         line-height: 1.2;
     }
 
     .header-left .subtitle {
         color: #9ca3af;
-        font-size: 0.95rem;
+        font-size: 0.9rem;
         font-weight: 400;
-        letter-spacing: 0.2px;
     }
 
     .badge-container {
@@ -119,7 +129,7 @@
         gap: 0.5rem;
         align-items: center;
         flex-wrap: wrap;
-        padding-top: 0.3rem;
+        padding-top: 0.2rem;
     }
 
     .badge {
@@ -128,7 +138,7 @@
         color: #818cf8;
         padding: 0.2rem 1rem;
         border-radius: 20px;
-        font-size: 0.7rem;
+        font-size: 0.65rem;
         font-weight: 600;
         letter-spacing: 0.5px;
         text-transform: uppercase;
@@ -146,20 +156,20 @@
     .form {
         display: flex;
         flex-direction: column;
-        gap: 1.8rem;
+        gap: 1.6rem;
     }
 
     .form-group {
         display: flex;
         flex-direction: column;
-        gap: 0.5rem;
+        gap: 0.4rem;
     }
 
     .form-group label {
         color: #d1d5db;
         font-weight: 600;
         font-size: 0.85rem;
-        letter-spacing: 0.3px;
+        letter-spacing: 0.2px;
         display: flex;
         align-items: center;
         gap: 0.5rem;
@@ -168,21 +178,21 @@
     .form-group label .optional {
         color: #6b7280;
         font-weight: 400;
-        font-size: 0.75rem;
+        font-size: 0.7rem;
     }
 
     .form-group label .required {
         color: #f87171;
-        font-size: 0.7rem;
+        font-size: 0.65rem;
     }
 
     select, 
     input[type="number"], 
     input[type="text"] {
         width: 100%;
-        padding: 0.8rem 1rem;
-        background: rgba(255, 255, 255, 0.04);
-        border: 1px solid rgba(255, 255, 255, 0.07);
+        padding: 0.75rem 1rem;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.08);
         border-radius: 12px;
         color: #e4e4e4;
         font-family: 'Inter', sans-serif;
@@ -194,14 +204,14 @@
 
     select:hover, 
     input:hover {
-        background: rgba(255, 255, 255, 0.06);
+        background: rgba(255, 255, 255, 0.07);
         border-color: rgba(255, 255, 255, 0.12);
     }
 
     select:focus, 
     input:focus {
-        border-color: rgba(129, 140, 248, 0.35);
-        background: rgba(129, 140, 248, 0.04);
+        border-color: rgba(129, 140, 248, 0.4);
+        background: rgba(129, 140, 248, 0.05);
         box-shadow: 0 0 0 4px rgba(129, 140, 248, 0.06);
     }
 
@@ -225,7 +235,7 @@
         display: flex;
         align-items: center;
         gap: 0.8rem;
-        padding: 0.3rem 0;
+        padding: 0.2rem 0;
     }
 
     .checkbox-group input[type="checkbox"] {
@@ -235,7 +245,6 @@
         cursor: pointer;
         flex-shrink: 0;
         border-radius: 6px;
-        transition: all 0.2s ease;
     }
 
     .checkbox-group input[type="checkbox"]:hover {
@@ -289,98 +298,108 @@
         min-width: 180px;
     }
 
-    /* ===== دکمه‌ها ===== */
+    /* ===== دکمه‌ها - اصلاح شده ===== */
     .btn-primary {
-        background: linear-gradient(135deg, #818cf8, #7c3aed);
-        color: white;
-        border: none;
-        padding: 1rem 2.5rem;
-        border-radius: 12px;
-        font-family: 'Inter', sans-serif;
-        font-weight: 600;
-        font-size: 1rem;
-        letter-spacing: 0.3px;
-        cursor: pointer;
-        transition: all 0.25s ease;
-        box-shadow: 0 4px 20px rgba(129, 140, 248, 0.25);
-        width: 100%;
-        height: 52px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 0.5rem;
+        background: linear-gradient(135deg, #818cf8, #7c3aed) !important;
+        color: white !important;
+        border: none !important;
+        padding: 0.9rem 2.5rem !important;
+        border-radius: 12px !important;
+        font-family: 'Inter', sans-serif !important;
+        font-weight: 600 !important;
+        font-size: 1rem !important;
+        letter-spacing: 0.3px !important;
+        cursor: pointer !important;
+        transition: all 0.25s ease !important;
+        box-shadow: 0 4px 20px rgba(129, 140, 248, 0.3) !important;
+        width: 100% !important;
+        height: 52px !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        gap: 0.5rem !important;
+        text-transform: none !important;
     }
 
     .btn-primary:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 8px 35px rgba(129, 140, 248, 0.35);
-        background: linear-gradient(135deg, #8b93f9, #7c3aed);
+        transform: translateY(-2px) !important;
+        box-shadow: 0 8px 35px rgba(129, 140, 248, 0.4) !important;
+        background: linear-gradient(135deg, #8b93f9, #7c3aed) !important;
     }
 
     .btn-primary:active {
-        transform: translateY(0);
-        box-shadow: 0 2px 15px rgba(129, 140, 248, 0.2);
+        transform: translateY(0) !important;
+        box-shadow: 0 2px 15px rgba(129, 140, 248, 0.25) !important;
     }
 
     .btn-group {
-        display: flex;
-        gap: 0.8rem;
-        flex-wrap: wrap;
-        margin-top: 0.8rem;
+        display: flex !important;
+        gap: 0.8rem !important;
+        flex-wrap: wrap !important;
+        margin-top: 0.8rem !important;
     }
 
     .btn-group button {
-        width: auto;
-        flex: 1;
-        min-width: 130px;
-        padding: 0.8rem 1.5rem;
-        font-size: 0.85rem;
-        height: 44px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 0.5rem;
-        border-radius: 12px;
-        font-family: 'Inter', sans-serif;
-        font-weight: 600;
-        cursor: pointer;
-        transition: all 0.25s ease;
-        border: none;
+        width: auto !important;
+        flex: 1 !important;
+        min-width: 130px !important;
+        padding: 0.75rem 1.5rem !important;
+        font-size: 0.85rem !important;
+        height: 44px !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        gap: 0.5rem !important;
+        border-radius: 12px !important;
+        font-family: 'Inter', sans-serif !important;
+        font-weight: 600 !important;
+        cursor: pointer !important;
+        transition: all 0.25s ease !important;
+        border: none !important;
     }
 
     .btn-copy {
-        background: rgba(255, 255, 255, 0.05);
-        color: #d1d5db;
-        box-shadow: none;
-        border: 1px solid rgba(255, 255, 255, 0.06);
+        background: rgba(255, 255, 255, 0.08) !important;
+        color: #d1d5db !important;
+        box-shadow: none !important;
+        border: 1px solid rgba(255, 255, 255, 0.08) !important;
     }
 
     .btn-copy:hover {
-        background: rgba(255, 255, 255, 0.1);
-        transform: translateY(-1px);
-        border-color: rgba(255, 255, 255, 0.12);
+        background: rgba(255, 255, 255, 0.14) !important;
+        transform: translateY(-2px) !important;
+        border-color: rgba(255, 255, 255, 0.15) !important;
+        box-shadow: 0 4px 15px rgba(255, 255, 255, 0.05) !important;
+    }
+
+    .btn-copy:active {
+        transform: translateY(0) !important;
     }
 
     .btn-download {
-        background: linear-gradient(135deg, #10b981, #059669);
-        color: white;
-        box-shadow: 0 4px 15px rgba(16, 185, 129, 0.2);
+        background: linear-gradient(135deg, #10b981, #059669) !important;
+        color: white !important;
+        box-shadow: 0 4px 15px rgba(16, 185, 129, 0.25) !important;
     }
 
     .btn-download:hover {
-        background: linear-gradient(135deg, #34d399, #059669);
-        box-shadow: 0 6px 25px rgba(16, 185, 129, 0.3);
-        transform: translateY(-1px);
+        background: linear-gradient(135deg, #34d399, #059669) !important;
+        box-shadow: 0 6px 25px rgba(16, 185, 129, 0.35) !important;
+        transform: translateY(-2px) !important;
+    }
+
+    .btn-download:active {
+        transform: translateY(0) !important;
     }
 
     .btn-icon {
-        font-size: 1.1rem;
+        font-size: 1.1rem !important;
     }
 
     /* ===== خروجی ===== */
     .output-area {
-        margin-top: 2.8rem;
-        padding-top: 2rem;
+        margin-top: 2.5rem;
+        padding-top: 1.8rem;
         border-top: 1px solid rgba(255, 255, 255, 0.05);
     }
 
@@ -388,7 +407,7 @@
         display: flex;
         justify-content: space-between;
         align-items: center;
-        margin-bottom: 1rem;
+        margin-bottom: 0.8rem;
         flex-wrap: wrap;
         gap: 0.5rem;
     }
@@ -397,7 +416,6 @@
         color: #d1d5db;
         font-size: 0.95rem;
         font-weight: 600;
-        letter-spacing: 0.3px;
         display: flex;
         align-items: center;
         gap: 0.5rem;
@@ -405,10 +423,9 @@
 
     .output-header .file-info {
         color: #6b7280;
-        font-size: 0.75rem;
-        font-weight: 400;
+        font-size: 0.7rem;
         background: rgba(255, 255, 255, 0.03);
-        padding: 0.2rem 0.8rem;
+        padding: 0.15rem 0.8rem;
         border-radius: 6px;
         border: 1px solid rgba(255, 255, 255, 0.04);
     }
@@ -417,11 +434,11 @@
         width: 100%;
         height: 340px;
         font-family: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
-        background: rgba(0, 0, 0, 0.45);
+        background: rgba(0, 0, 0, 0.5);
         color: #d4d4d4;
         padding: 1.2rem 1.4rem;
         border-radius: 12px;
-        border: 1px solid rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.06);
         resize: vertical;
         font-size: 0.85rem;
         line-height: 1.8;
@@ -432,22 +449,17 @@
 
     .output-area textarea:focus {
         border-color: rgba(129, 140, 248, 0.2);
-        background: rgba(0, 0, 0, 0.55);
+        background: rgba(0, 0, 0, 0.6);
         box-shadow: 0 0 0 4px rgba(129, 140, 248, 0.04);
-    }
-
-    .output-area textarea::selection {
-        background: rgba(129, 140, 248, 0.2);
-        color: #e4e4e4;
     }
 
     /* ===== یادداشت ===== */
     .note {
-        background: rgba(129, 140, 248, 0.05);
+        background: rgba(129, 140, 248, 0.06);
         border-left: 3px solid #818cf8;
-        padding: 1rem 1.2rem;
+        padding: 0.8rem 1.2rem;
         border-radius: 10px;
-        margin: 1rem 0 1.2rem 0;
+        margin: 0.8rem 0 1.2rem 0;
         color: #9ca3af;
         font-size: 0.85rem;
         line-height: 1.7;
@@ -467,15 +479,11 @@
         font-weight: 600;
     }
 
-    .note .highlight {
-        color: #fbbf24;
-    }
-
-    /* ===== توضیحات کوچک ===== */
+    /* ===== توضیحات ===== */
     .helper-text {
         color: #6b7280;
         font-size: 0.75rem;
-        margin-top: 0.2rem;
+        margin-top: 0.15rem;
         display: block;
         line-height: 1.5;
     }
@@ -493,7 +501,7 @@
     .divider {
         height: 1px;
         background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.06), transparent);
-        margin: 1.8rem 0;
+        margin: 1.5rem 0;
     }
 
     /* ===== اسکرول‌بار ===== */
@@ -536,7 +544,7 @@
 
     @media (max-width: 640px) {
         body {
-            padding: 1rem;
+            padding: 0.8rem;
         }
 
         .container {
@@ -546,13 +554,17 @@
         
         .header {
             flex-direction: column;
-            gap: 0.8rem;
-            margin-bottom: 2rem;
-            padding-bottom: 1.2rem;
+            gap: 0.6rem;
+            margin-bottom: 1.8rem;
+            padding-bottom: 1rem;
         }
 
         .header-left h1 {
-            font-size: 1.6rem;
+            font-size: 1.5rem;
+        }
+
+        .header-left .subtitle {
+            font-size: 0.8rem;
         }
         
         .btn-group {
@@ -560,8 +572,8 @@
         }
 
         .btn-group button {
-            width: 100%;
-            min-width: unset;
+            width: 100% !important;
+            min-width: unset !important;
         }
 
         .flex-row {
@@ -589,9 +601,9 @@
         }
 
         .btn-primary {
-            height: 48px;
-            font-size: 0.9rem;
-            padding: 0.8rem 1.5rem;
+            height: 48px !important;
+            font-size: 0.9rem !important;
+            padding: 0.7rem 1.5rem !important;
         }
 
         .badge-container {
@@ -600,7 +612,11 @@
 
         .note {
             font-size: 0.8rem;
-            padding: 0.8rem 1rem;
+            padding: 0.7rem 1rem;
+        }
+
+        .form {
+            gap: 1.2rem;
         }
     }
 
@@ -610,11 +626,11 @@
         }
 
         .header-left h1 {
-            font-size: 1.3rem;
+            font-size: 1.2rem;
         }
 
         .output-area textarea {
-            height: 200px;
+            height: 180px;
         }
     }
 </style>
