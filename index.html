@@ -523,11 +523,6 @@
         </div>
 
         <div class="form-group">
-            <label for="port">Port</label>
-            <input type="number" id="port" value="443" min="1" max="65535">
-        </div>
-
-        <div class="form-group">
             <label>Padding Settings</label>
             <div class="grid-2col">
                 <div>
@@ -589,67 +584,106 @@
             </div>
         </div>
     </div>
+<script>
+    // ---------- IP List from ips.txt ----------
+    let IP_LIST = [];
 
-    <script>
-        // ---------- Logic ----------
+    // Fetch IP list from ips.txt file
+    async function loadIPList() {
+        try {
+            const response = await fetch('ips.txt');
+            if (!response.ok) {
+                throw new Error('Failed to load ips.txt');
+            }
+            const text = await response.text();
+            // Split by newline and filter out empty lines
+            IP_LIST = text.split('\n')
+                .map(line => line.trim())
+                .filter(line => line.length > 0 && line.includes(':'));
+            populateIPSelect();
+        } catch (error) {
+            console.error('Error loading ips.txt:', error);
+        }
+    }
+
+    // Populate IP select dropdown
+    function populateIPSelect() {
+        const select = document.getElementById('cleanIP');
+        select.innerHTML = '';
         
-        // Fetch clean IPs
-        async function fetchCleanIPs() {
-            const select = document.getElementById('cleanIP');
-            try {
-                const ips = [
-                    '104.16.0.1', '104.16.1.1', '104.16.2.1', '104.16.3.1',
-                    '104.16.4.1', '104.16.5.1', '104.16.6.1', '104.16.7.1',
-                    '104.16.8.1', '104.16.9.1', '104.16.10.1', '104.16.11.1',
-                    '104.16.12.1', '104.16.13.1', '104.16.14.1', '104.16.15.1'
-                ];
-                select.innerHTML = ips.map(ip => `<option value="${ip}">${ip}</option>`).join('');
-                select.innerHTML += `<option value="custom">Use custom IP</option>`;
-            } catch (error) {
-                select.innerHTML = '<option value="">Error loading IPs</option>';
-                console.error('Error:', error);
+        // Add grouped options
+        IP_LIST.forEach(ip => {
+            const option = document.createElement('option');
+            option.value = ip;
+            option.textContent = ip;
+            select.appendChild(option);
+        });
+        
+        // Add custom option
+        const customOption = document.createElement('option');
+        customOption.value = 'custom';
+        customOption.textContent = '✏️ Use custom IP';
+        select.appendChild(customOption);
+        
+        // Show count
+        const countDisplay = document.getElementById('ipCount');
+        if (countDisplay) {
+            countDisplay.textContent = `(${IP_LIST.length} IPs loaded)`;
+        }
+    }
+
+    // Generate random key (32 bytes = 64 hex chars)
+    function generateRandomKey() {
+        const bytes = new Uint8Array(32);
+        crypto.getRandomValues(bytes);
+        return Array.from(bytes).map(b => b.toString(16).padStart(2, '0')).join('');
+    }
+
+    // Generate private key
+    function generatePrivateKey() {
+        const bytes = new Uint8Array(32);
+        crypto.getRandomValues(bytes);
+        return 'PRIVATE_KEY_' + Array.from(bytes).map(b => b.toString(16).padStart(2, '0')).join('').substring(0, 32);
+    }
+
+    // Generate config
+    function generateConfig() {
+        let selectedIP = document.getElementById('cleanIP').value;
+        const customIP = document.getElementById('customIP').value.trim();
+        
+        // Use custom IP if provided
+        if (customIP) {
+            // Check if it already has port
+            if (customIP.includes(':')) {
+                selectedIP = customIP;
+            } else {
+                // Default port if not specified
+                selectedIP = customIP + ':443';
             }
         }
-
-        // Generate random key (32 bytes = 64 hex chars)
-        function generateRandomKey() {
-            const bytes = new Uint8Array(32);
-            crypto.getRandomValues(bytes);
-            return Array.from(bytes).map(b => b.toString(16).padStart(2, '0')).join('');
+        
+        // If no selection or custom is selected but no custom IP provided
+        if (!selectedIP || selectedIP === 'custom') {
+            alert('Please select or enter a valid IP address.');
+            return;
         }
 
-        // Generate private key
-        function generatePrivateKey() {
-            const bytes = new Uint8Array(32);
-            crypto.getRandomValues(bytes);
-            return 'PRIVATE_KEY_' + Array.from(bytes).map(b => b.toString(16).padStart(2, '0')).join('').substring(0, 32);
-        }
+        // Parse IP and port from selected value
+        const [ip, port] = selectedIP.split(':');
+        
+        const s3 = document.getElementById('s3').value;
+        const s4 = document.getElementById('s4').value;
+        const keepalive = document.getElementById('keepalive').value;
+        const rekeyAfter = document.getElementById('rekeyAfter').value;
+        const rekeyTimeout = document.getElementById('rekeyTimeout').value;
+        const rejectAfter = document.getElementById('rejectAfter').value;
 
-        // Generate config
-        function generateConfig() {
-            let ip = document.getElementById('cleanIP').value;
-            const customIP = document.getElementById('customIP').value.trim();
-            if (customIP) ip = customIP;
-            
-            const port = document.getElementById('port').value;
-            const s3 = document.getElementById('s3').value;
-            const s4 = document.getElementById('s4').value;
-            const keepalive = document.getElementById('keepalive').value;
-            const rekeyAfter = document.getElementById('rekeyAfter').value;
-            const rekeyTimeout = document.getElementById('rekeyTimeout').value;
-            const rejectAfter = document.getElementById('rejectAfter').value;
+        const headerProtectionKey = generateRandomKey();
+        const contentPadding = `${s3}-${s4}`;
+        const privateKey = generatePrivateKey();
+        const publicKey = 'PUBLIC_KEY_' + generateRandomKey().substring(0, 32);
 
-            if (!ip || ip === 'custom') {
-                alert('Please enter a valid clean IP address.');
-                return;
-            }
-
-            const headerProtectionKey = generateRandomKey();
-            const contentPadding = `${s3}-${s4}`;
-            const privateKey = generatePrivateKey();
-            const publicKey = 'PUBLIC_KEY_' + generateRandomKey().substring(0, 32);
-
-            const config = `[Interface]
+        const config = `[Interface]
         PrivateKey = ${privateKey}
         Address = 10.0.0.2/32
         DNS = 1.1.1.1, 8.8.8.8
@@ -669,74 +703,137 @@
         AllowedIPs = 0.0.0.0/0
         PersistentKeepalive = 0`;
 
-            return config;
-        }
+        return config;
+    }
 
-        // Display config
-        function displayConfig() {
-            const config = generateConfig();
-            if (!config) return;
-            
-            const textarea = document.getElementById('configOutput');
-            textarea.value = config;
-            document.getElementById('outputArea').style.display = 'block';
-            document.getElementById('charCount').textContent = config.length + ' characters';
-        }
-
-        // Copy to clipboard
-        function copyConfig() {
-            const textarea = document.getElementById('configOutput');
-            navigator.clipboard.writeText(textarea.value).then(() => {
-                const btn = document.getElementById('copyBtn');
-                const orig = btn.textContent;
-                btn.textContent = '✅ Copied!';
-                setTimeout(() => { btn.textContent = orig; }, 1500);
-            }).catch(() => {
-                textarea.select();
-                document.execCommand('copy');
-                alert('Config copied to clipboard!');
-            });
-        }
-
-        // Download file
-        function downloadConfig() {
-            const config = document.getElementById('configOutput').value;
-            if (!config) {
-                alert('Please generate a config first.');
-                return;
-            }
-            
-            const blob = new Blob([config], { type: 'text/plain' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `awg3_${new Date().getTime()}.conf`;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
-        }
-
-        // ---------- Event Listeners ----------
+    // Display config
+    function displayConfig() {
+        const config = generateConfig();
+        if (!config) return;
         
-        document.addEventListener('DOMContentLoaded', () => {
-            fetchCleanIPs();
-            
-            document.getElementById('generateBtn').addEventListener('click', displayConfig);
-            document.getElementById('copyBtn').addEventListener('click', copyConfig);
-            document.getElementById('downloadBtn').addEventListener('click', downloadConfig);
-            
-            document.getElementById('cleanIP').addEventListener('change', function() {
-                const customField = document.getElementById('customIP');
-                if (this.value === 'custom') {
-                    customField.style.display = 'inline-block';
-                    customField.focus();
-                } else {
-                    customField.style.display = 'inline-block';
-                    customField.value = '';
-                }
-            });
+        const textarea = document.getElementById('configOutput');
+        textarea.value = config;
+        document.getElementById('outputArea').style.display = 'block';
+        document.getElementById('charCount').textContent = config.length + ' characters';
+    }
+
+    // Copy to clipboard
+    function copyConfig() {
+        const textarea = document.getElementById('configOutput');
+        navigator.clipboard.writeText(textarea.value).then(() => {
+            const btn = document.getElementById('copyBtn');
+            const orig = btn.textContent;
+            btn.textContent = '✅ Copied!';
+            setTimeout(() => { btn.textContent = orig; }, 1500);
+        }).catch(() => {
+            textarea.select();
+            document.execCommand('copy');
+            alert('Config copied to clipboard!');
         });
-    </script>
+    }
+
+    // Download file
+    function downloadConfig() {
+        const config = document.getElementById('configOutput').value;
+        if (!config) {
+            alert('Please generate a config first.');
+            return;
+        }
+        
+        const blob = new Blob([config], { type: 'text/plain' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `awg3_${new Date().getTime()}.conf`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    }
+
+    // Download IP list as ips.txt
+    function downloadIPList() {
+        const content = IP_LIST.join('\n');
+        const blob = new Blob([content], { type: 'text/plain' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'ips.txt';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    }
+
+    // Refresh IP list from file
+    async function refreshIPList() {
+        const btn = document.getElementById('refreshIPBtn');
+        const origText = btn.textContent;
+        btn.textContent = '🔄 Loading...';
+        btn.disabled = true;
+        
+        await loadIPList();
+        
+        btn.textContent = '✅ Loaded!';
+        setTimeout(() => {
+            btn.textContent = origText;
+            btn.disabled = false;
+        }, 1500);
+    }
+
+    // ---------- Event Listeners ----------
+    
+    document.addEventListener('DOMContentLoaded', () => {
+        // Load IP list
+        loadIPList();
+        
+        document.getElementById('generateBtn').addEventListener('click', displayConfig);
+        document.getElementById('copyBtn').addEventListener('click', copyConfig);
+        document.getElementById('downloadBtn').addEventListener('click', downloadConfig);
+        
+        // Download IP list button
+        const downloadIPBtn = document.createElement('button');
+        downloadIPBtn.className = 'btn-download';
+        downloadIPBtn.id = 'downloadIPBtn';
+        downloadIPBtn.textContent = '📥 Download IP List (ips.txt)';
+        downloadIPBtn.style.marginTop = '0.5rem';
+        downloadIPBtn.style.width = '100%';
+        downloadIPBtn.addEventListener('click', downloadIPList);
+        
+        // Refresh IP list button
+        const refreshIPBtn = document.createElement('button');
+        refreshIPBtn.className = 'btn-copy';
+        refreshIPBtn.id = 'refreshIPBtn';
+        refreshIPBtn.textContent = '🔄 Refresh IP List';
+        refreshIPBtn.style.marginTop = '0.5rem';
+        refreshIPBtn.style.width = '100%';
+        refreshIPBtn.addEventListener('click', refreshIPList);
+        
+        // Insert buttons after generate button
+        const generateBtn = document.getElementById('generateBtn');
+        generateBtn.parentNode.insertBefore(downloadIPBtn, generateBtn.nextSibling);
+        generateBtn.parentNode.insertBefore(refreshIPBtn, generateBtn.nextSibling);
+        
+        document.getElementById('cleanIP').addEventListener('change', function() {
+            const customField = document.getElementById('customIP');
+            if (this.value === 'custom') {
+                customField.style.display = 'inline-block';
+                customField.focus();
+            } else {
+                customField.style.display = 'inline-block';
+                customField.value = '';
+            }
+        });
+        
+        // Add IP count display
+        const formGroup = document.querySelector('.form-group label[for="cleanIP"]').parentNode;
+        const countDisplay = document.createElement('span');
+        countDisplay.id = 'ipCount';
+        countDisplay.className = 'badge';
+        countDisplay.style.marginLeft = '0.5rem';
+        countDisplay.textContent = '(Loading...)';
+        document.querySelector('.form-group label[for="cleanIP"]').appendChild(countDisplay);
+    });
+</script>
 </body>
 </html>
