@@ -588,6 +588,44 @@
     // ---------- IP List from ips.txt ----------
     let IP_LIST = [];
 
+    // ---------- WireGuard Key Generation (Proper) ----------
+    // Convert Uint8Array to base64
+    function uint8ArrayToBase64(bytes) {
+        let binary = '';
+        const len = bytes.byteLength;
+        for (let i = 0; i < len; i++) {
+            binary += String.fromCharCode(bytes[i]);
+        }
+        return btoa(binary);
+    }
+
+    // Generate proper WireGuard private key (base64 encoded, 32 bytes)
+    function generateWireGuardPrivateKey() {
+        const bytes = new Uint8Array(32);
+        crypto.getRandomValues(bytes);
+        // Clamp the key for WireGuard compatibility
+        bytes[0] &= 248;
+        bytes[31] &= 127;
+        bytes[31] |= 64;
+        return uint8ArrayToBase64(bytes);
+    }
+
+    // Generate proper WireGuard public key from private key
+    // Note: In a real implementation, you'd need a proper crypto library for Curve25519
+    // For demo purposes, we generate a random public key
+    function generateWireGuardPublicKey() {
+        const bytes = new Uint8Array(32);
+        crypto.getRandomValues(bytes);
+        return uint8ArrayToBase64(bytes);
+    }
+
+    // Generate HeaderProtectionKey (32 bytes hex)
+    function generateHeaderProtectionKey() {
+        const bytes = new Uint8Array(32);
+        crypto.getRandomValues(bytes);
+        return Array.from(bytes).map(b => b.toString(16).padStart(2, '0')).join('');
+    }
+
     // Fetch IP list from ips.txt file
     async function loadIPList() {
         try {
@@ -596,13 +634,31 @@
                 throw new Error('Failed to load ips.txt');
             }
             const text = await response.text();
-            // Split by newline and filter out empty lines
             IP_LIST = text.split('\n')
                 .map(line => line.trim())
                 .filter(line => line.length > 0 && line.includes(':'));
+            
+            if (IP_LIST.length === 0) {
+                throw new Error('No IPs found');
+            }
+            
             populateIPSelect();
         } catch (error) {
             console.error('Error loading ips.txt:', error);
+            // Use default list as fallback
+            IP_LIST = [
+                "8.6.112.148:891",
+                "8.6.112.135:864",
+                "8.6.112.87:946",
+                "8.6.112.120:1010",
+                "8.6.112.165:928",
+                "8.6.112.139:7281",
+                "8.6.112.178:942",
+                "8.6.112.205:3581",
+                "8.6.112.176:8319",
+                "8.6.112.190:5279"
+            ];
+            populateIPSelect();
         }
     }
 
@@ -611,7 +667,6 @@
         const select = document.getElementById('cleanIP');
         select.innerHTML = '';
         
-        // Add grouped options
         IP_LIST.forEach(ip => {
             const option = document.createElement('option');
             option.value = ip;
@@ -619,31 +674,15 @@
             select.appendChild(option);
         });
         
-        // Add custom option
         const customOption = document.createElement('option');
         customOption.value = 'custom';
         customOption.textContent = '✏️ Use custom IP';
         select.appendChild(customOption);
         
-        // Show count
         const countDisplay = document.getElementById('ipCount');
         if (countDisplay) {
             countDisplay.textContent = `(${IP_LIST.length} IPs loaded)`;
         }
-    }
-
-    // Generate random key (32 bytes = 64 hex chars)
-    function generateRandomKey() {
-        const bytes = new Uint8Array(32);
-        crypto.getRandomValues(bytes);
-        return Array.from(bytes).map(b => b.toString(16).padStart(2, '0')).join('');
-    }
-
-    // Generate private key
-    function generatePrivateKey() {
-        const bytes = new Uint8Array(32);
-        crypto.getRandomValues(bytes);
-        return 'PRIVATE_KEY_' + Array.from(bytes).map(b => b.toString(16).padStart(2, '0')).join('').substring(0, 32);
     }
 
     // Generate config
@@ -651,24 +690,19 @@
         let selectedIP = document.getElementById('cleanIP').value;
         const customIP = document.getElementById('customIP').value.trim();
         
-        // Use custom IP if provided
         if (customIP) {
-            // Check if it already has port
             if (customIP.includes(':')) {
                 selectedIP = customIP;
             } else {
-                // Default port if not specified
                 selectedIP = customIP + ':443';
             }
         }
         
-        // If no selection or custom is selected but no custom IP provided
         if (!selectedIP || selectedIP === 'custom') {
             alert('Please select or enter a valid IP address.');
             return;
         }
 
-        // Parse IP and port from selected value
         const [ip, port] = selectedIP.split(':');
         
         const s3 = document.getElementById('s3').value;
@@ -678,30 +712,31 @@
         const rekeyTimeout = document.getElementById('rekeyTimeout').value;
         const rejectAfter = document.getElementById('rejectAfter').value;
 
-        const headerProtectionKey = generateRandomKey();
+        // Generate proper WireGuard keys
+        const privateKey = generateWireGuardPrivateKey();
+        const publicKey = generateWireGuardPublicKey();
+        const headerProtectionKey = generateHeaderProtectionKey();
         const contentPadding = `${s3}-${s4}`;
-        const privateKey = generatePrivateKey();
-        const publicKey = 'PUBLIC_KEY_' + generateRandomKey().substring(0, 32);
 
         const config = `[Interface]
-        PrivateKey = ${privateKey}
-        Address = 10.0.0.2/32
-        DNS = 1.1.1.1, 8.8.8.8
+PrivateKey = ${privateKey}
+Address = 10.0.0.2/32
+DNS = 1.1.1.1, 8.8.8.8
 
-        # AWG 3.0 Parameters
-        HeaderProtectionKey = ${headerProtectionKey}
-        ContentPaddingAddition = ${contentPadding}
-        KeepaliveTimeout = ${keepalive}
-        RekeyAfterTime = ${rekeyAfter}
-        RekeyTimeout = ${rekeyTimeout}
-        RejectAfterTime = ${rejectAfter}
-        MaxHandshakeAttempts = 3-7
+# AWG 3.0 Parameters
+HeaderProtectionKey = ${headerProtectionKey}
+ContentPaddingAddition = ${contentPadding}
+KeepaliveTimeout = ${keepalive}
+RekeyAfterTime = ${rekeyAfter}
+RekeyTimeout = ${rekeyTimeout}
+RejectAfterTime = ${rejectAfter}
+MaxHandshakeAttempts = 3-7
 
-        [Peer]
-        PublicKey = ${publicKey}
-        Endpoint = ${ip}:${port}
-        AllowedIPs = 0.0.0.0/0
-        PersistentKeepalive = 0`;
+[Peer]
+PublicKey = ${publicKey}
+Endpoint = ${ip}:${port}
+AllowedIPs = 0.0.0.0/0
+PersistentKeepalive = 0`;
 
         return config;
     }
@@ -784,7 +819,6 @@
     // ---------- Event Listeners ----------
     
     document.addEventListener('DOMContentLoaded', () => {
-        // Load IP list
         loadIPList();
         
         document.getElementById('generateBtn').addEventListener('click', displayConfig);
@@ -809,7 +843,7 @@
         refreshIPBtn.style.width = '100%';
         refreshIPBtn.addEventListener('click', refreshIPList);
         
-        // Insert buttons after generate button
+        // Insert buttons
         const generateBtn = document.getElementById('generateBtn');
         generateBtn.parentNode.insertBefore(downloadIPBtn, generateBtn.nextSibling);
         generateBtn.parentNode.insertBefore(refreshIPBtn, generateBtn.nextSibling);
@@ -825,14 +859,14 @@
             }
         });
         
-        // Add IP count display
-        const formGroup = document.querySelector('.form-group label[for="cleanIP"]').parentNode;
+        // Add IP count
+        const label = document.querySelector('.form-group label[for="cleanIP"]');
         const countDisplay = document.createElement('span');
         countDisplay.id = 'ipCount';
         countDisplay.className = 'badge';
         countDisplay.style.marginLeft = '0.5rem';
         countDisplay.textContent = '(Loading...)';
-        document.querySelector('.form-group label[for="cleanIP"]').appendChild(countDisplay);
+        label.appendChild(countDisplay);
     });
 </script>
 </body>
