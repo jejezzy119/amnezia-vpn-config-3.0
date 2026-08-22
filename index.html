@@ -1,570 +1,602 @@
 <!DOCTYPE html>
-<html lang="fa" dir="rtl">
+<html lang="en" dir="ltr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>تولید کانفیگ AmneziaWG 3.0</title>
-
-<style>
+    <title>AmneziaWG 3.0 Config Generator</title>
+    <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
 
-body {
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    min-height: 100vh;
-    background: #f6f8fc;
-    background-image: 
-        radial-gradient(circle at 20% 30%, rgba(79, 70, 229, 0.04) 0%, transparent 50%),
-        radial-gradient(circle at 80% 70%, rgba(236, 72, 153, 0.04) 0%, transparent 45%),
-        radial-gradient(circle at 40% 90%, rgba(16, 185, 129, 0.03) 0%, transparent 40%);
-    padding: 2rem;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-    color: #1e293b;
-    direction: ltr;
-}
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
 
-/* ── Main Card ── */
-.container {
-    background: rgba(255, 255, 255, 0.82);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border-radius: 32px;
-    padding: 2.5rem 2.8rem;
-    max-width: 960px;
-    width: 100%;
-    box-shadow: 
-        0 20px 60px rgba(0, 0, 0, 0.06),
-        0 8px 24px rgba(0, 0, 0, 0.03),
-        0 0 0 1px rgba(255, 255, 255, 0.5) inset;
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    transition: all 0.2s ease;
-    position: relative;
-}
-
-/* Subtle gradient border */
-.container::before {
-    content: '';
-    position: absolute;
-    inset: -1px;
-    border-radius: 32px;
-    padding: 1.5px;
-    background: linear-gradient(135deg, 
-        rgba(79, 70, 229, 0.25), 
-        rgba(236, 72, 153, 0.15), 
-        rgba(16, 185, 129, 0.10));
-    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-    -webkit-mask-composite: xor;
-    mask-composite: exclude;
-    pointer-events: none;
-    z-index: 0;
-}
-
-.container > * {
-    position: relative;
-    z-index: 1;
-}
-
-/* ── Header ── */
-.header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-end;
-    flex-wrap: wrap;
-    gap: 0.75rem;
-    margin-bottom: 2rem;
-    padding-bottom: 1.25rem;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.04);
-}
-
-.header-left h1 {
-    font-size: 2.2rem;
-    font-weight: 700;
-    letter-spacing: -0.02em;
-    background: linear-gradient(145deg, #4f46e5, #7c3aed);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    margin-bottom: 0.15rem;
-}
-
-.subtitle {
-    color: #64748b;
-    font-size: 0.95rem;
-    font-weight: 400;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    flex-wrap: wrap;
-}
-
-.badge {
-    background: rgba(79, 70, 229, 0.08);
-    color: #4f46e5;
-    padding: 0.2rem 0.9rem;
-    border-radius: 40px;
-    font-size: 0.7rem;
-    font-weight: 600;
-    letter-spacing: 0.3px;
-    text-transform: uppercase;
-    border: 1px solid rgba(79, 70, 229, 0.12);
-}
-
-/* ── Form Elements ── */
-.form-group {
-    margin-bottom: 1.5rem;
-}
-
-label {
-    display: block;
-    color: #1e293b;
-    font-weight: 600;
-    font-size: 0.85rem;
-    letter-spacing: 0.2px;
-    margin-bottom: 0.4rem;
-}
-
-label .optional {
-    color: #94a3b8;
-    font-weight: 400;
-    font-size: 0.75rem;
-}
-
-select,
-input[type="number"],
-input[type="text"] {
-    width: 100%;
-    padding: 0.75rem 1rem;
-    background: rgba(255, 255, 255, 0.6);
-    border: 1px solid rgba(0, 0, 0, 0.06);
-    border-radius: 14px;
-    color: #0f172a;
-    font-family: 'Inter', sans-serif;
-    font-size: 0.95rem;
-    transition: all 0.2s ease;
-    outline: none;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.01);
-    backdrop-filter: blur(4px);
-}
-
-select:hover,
-input:hover {
-    background: rgba(255, 255, 255, 0.8);
-    border-color: rgba(0, 0, 0, 0.10);
-}
-
-select:focus,
-input:focus {
-    border-color: #4f46e5;
-    background: white;
-    box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.08), 0 2px 8px rgba(0,0,0,0.02);
-}
-
-select option {
-    background: white;
-    color: #0f172a;
-}
-
-select {
-    appearance: none;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%2364758b' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
-    background-repeat: no-repeat;
-    background-position: right 1.2rem center;
-    cursor: pointer;
-}
-
-/* ── Checkbox ── */
-.checkbox-group {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    margin-bottom: 1rem;
-}
-
-.checkbox-group input[type="checkbox"] {
-    width: 20px;
-    height: 20px;
-    accent-color: #4f46e5;
-    cursor: pointer;
-    flex-shrink: 0;
-    border-radius: 6px;
-    border: 1px solid rgba(0, 0, 0, 0.08);
-    background: white;
-}
-
-.checkbox-group label {
-    margin-bottom: 0;
-    cursor: pointer;
-    font-weight: 400;
-    color: #1e293b;
-}
-
-/* ── Grid & Layout ── */
-.grid-2col {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1.25rem;
-}
-
-.flex-row {
-    display: flex;
-    gap: 0.75rem;
-    align-items: center;
-    flex-wrap: wrap;
-}
-
-.flex-row label {
-    margin-bottom: 0;
-    white-space: nowrap;
-    font-weight: 400;
-    color: #334155;
-}
-
-.flex-row input {
-    width: auto;
-    flex: 1;
-    min-width: 160px;
-}
-
-#customIP {
-    display: inline-block;
-    width: auto;
-    flex: 1;
-    min-width: 180px;
-}
-
-.small-text {
-    color: #94a3b8;
-    font-size: 0.75rem;
-    margin-top: 0.3rem;
-    display: block;
-}
-
-/* ── Buttons ── */
-.btn-primary {
-    background: linear-gradient(145deg, #4f46e5, #7c3aed);
-    color: white;
-    border: none;
-    padding: 0.85rem 2.5rem;
-    border-radius: 14px;
-    font-family: 'Inter', sans-serif;
-    font-weight: 600;
-    font-size: 0.95rem;
-    letter-spacing: 0.2px;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    box-shadow: 0 6px 20px rgba(79, 70, 229, 0.18);
-    width: 100%;
-    border: 1px solid rgba(255, 255, 255, 0.15);
-}
-
-.btn-primary:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 10px 30px rgba(79, 70, 229, 0.25);
-    background: linear-gradient(145deg, #6366f1, #7c3aed);
-}
-
-.btn-primary:active {
-    transform: translateY(0);
-    box-shadow: 0 4px 12px rgba(79, 70, 229, 0.15);
-}
-
-.btn-group {
-    display: flex;
-    gap: 0.75rem;
-    flex-wrap: wrap;
-    margin-top: 0.5rem;
-}
-
-.btn-group button {
-    width: auto;
-    flex: 1;
-    min-width: 120px;
-    padding: 0.7rem 1.5rem;
-    font-size: 0.85rem;
-    border-radius: 12px;
-    font-weight: 600;
-    border: 1px solid rgba(0, 0, 0, 0.04);
-    transition: all 0.15s ease;
-    cursor: pointer;
-}
-
-.btn-copy {
-    background: rgba(255, 255, 255, 0.6);
-    backdrop-filter: blur(4px);
-    box-shadow: 0 2px 8px rgba(0,0,0,0.02);
-    border: 1px solid rgba(0, 0, 0, 0.04);
-    color: #1e293b;
-}
-
-.btn-copy:hover {
-    background: white;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.04);
-    transform: translateY(-1px);
-    border-color: rgba(0, 0, 0, 0.08);
-}
-
-.btn-download {
-    background: linear-gradient(145deg, #10b981, #059669);
-    color: white;
-    box-shadow: 0 6px 18px rgba(16, 185, 129, 0.15);
-    border: 1px solid rgba(255, 255, 255, 0.10);
-}
-
-.btn-download:hover {
-    background: linear-gradient(145deg, #34d399, #059669);
-    box-shadow: 0 8px 28px rgba(16, 185, 129, 0.22);
-    transform: translateY(-2px);
-}
-
-/* ── Output Area ── */
-.output-area {
-    margin-top: 2rem;
-    padding-top: 1.75rem;
-    border-top: 1px solid rgba(0, 0, 0, 0.04);
-}
-
-.output-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 0.75rem;
-}
-
-.output-header h3 {
-    color: #1e293b;
-    font-size: 0.95rem;
-    font-weight: 600;
-}
-
-.output-header span {
-    color: #94a3b8;
-    font-size: 0.75rem;
-}
-
-.output-area textarea {
-    width: 100%;
-    height: 320px;
-    font-family: 'JetBrains Mono', 'Fira Code', monospace;
-    background: rgba(255, 255, 255, 0.5);
-    backdrop-filter: blur(4px);
-    color: #0f172a;
-    padding: 1.25rem;
-    border-radius: 16px;
-    border: 1px solid rgba(0, 0, 0, 0.04);
-    resize: vertical;
-    font-size: 0.85rem;
-    line-height: 1.7;
-    transition: all 0.2s ease;
-    outline: none;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.01);
-}
-
-.output-area textarea:focus {
-    border-color: rgba(79, 70, 229, 0.15);
-    background: rgba(255, 255, 255, 0.7);
-    box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.04);
-}
-
-.output-area textarea::selection {
-    background: rgba(79, 70, 229, 0.12);
-    color: #0f172a;
-}
-
-/* ── Note ── */
-.note {
-    background: rgba(79, 70, 229, 0.03);
-    border-left: 3px solid #4f46e5;
-    padding: 0.85rem 1.25rem;
-    border-radius: 12px;
-    margin: 1rem 0 1.25rem 0;
-    color: #334155;
-    font-size: 0.85rem;
-    line-height: 1.6;
-    backdrop-filter: blur(4px);
-    border: 1px solid rgba(79, 70, 229, 0.04);
-}
-
-.note code {
-    background: rgba(79, 70, 229, 0.06);
-    padding: 0.15rem 0.5rem;
-    border-radius: 6px;
-    color: #4f46e5;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.8rem;
-}
-
-.note strong {
-    color: #0f172a;
-    font-weight: 600;
-}
-
-/* ── Divider ── */
-.divider {
-    height: 1px;
-    background: linear-gradient(90deg, transparent, rgba(0, 0, 0, 0.04), transparent);
-    margin: 1.5rem 0;
-}
-
-/* ── Scrollbar ── */
-::-webkit-scrollbar {
-    width: 6px;
-    height: 6px;
-}
-
-::-webkit-scrollbar-track {
-    background: rgba(0, 0, 0, 0.02);
-    border-radius: 12px;
-}
-
-::-webkit-scrollbar-thumb {
-    background: rgba(0, 0, 0, 0.06);
-    border-radius: 12px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-    background: rgba(0, 0, 0, 0.10);
-}
-
-::selection {
-    background: rgba(79, 70, 229, 0.12);
-    color: #0f172a;
-}
-
-/* ── Responsive ── */
-@media (max-width: 768px) {
     body {
-        padding: 1rem;
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        min-height: 100vh;
+        background: #f6f8fc;
+        background-image: 
+            radial-gradient(circle at 20% 30%, rgba(79, 70, 229, 0.04) 0%, transparent 50%),
+            radial-gradient(circle at 80% 70%, rgba(236, 72, 153, 0.04) 0%, transparent 45%),
+            radial-gradient(circle at 40% 90%, rgba(16, 185, 129, 0.03) 0%, transparent 40%);
+        padding: 2rem;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        color: #1e293b;
+        direction: ltr;
     }
 
+    /* ── Main Card ── */
     .container {
-        padding: 1.75rem;
-        border-radius: 24px;
-    }
-
-    .grid-2col {
-        grid-template-columns: 1fr;
-        gap: 0.75rem;
-    }
-
-    .btn-group {
-        flex-direction: column;
-    }
-
-    .btn-group button {
+        background: rgba(255, 255, 255, 0.82);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border-radius: 32px;
+        padding: 2.5rem 2.8rem;
+        max-width: 960px;
         width: 100%;
+        box-shadow: 
+            0 20px 60px rgba(0, 0, 0, 0.06),
+            0 8px 24px rgba(0, 0, 0, 0.03),
+            0 0 0 1px rgba(255, 255, 255, 0.5) inset;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        transition: all 0.2s ease;
+        position: relative;
+    }
+
+    /* Subtle gradient border */
+    .container::before {
+        content: '';
+        position: absolute;
+        inset: -1px;
+        border-radius: 32px;
+        padding: 1.5px;
+        background: linear-gradient(135deg, 
+            rgba(79, 70, 229, 0.25), 
+            rgba(236, 72, 153, 0.15), 
+            rgba(16, 185, 129, 0.10));
+        -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+        mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+        -webkit-mask-composite: xor;
+        mask-composite: exclude;
+        pointer-events: none;
+        z-index: 0;
+    }
+
+    .container > * {
+        position: relative;
+        z-index: 1;
+    }
+
+    /* ── Header ── */
+    .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+        margin-bottom: 2rem;
+        padding-bottom: 1.25rem;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.04);
+    }
+
+    .header-left h1 {
+        font-size: 2.2rem;
+        font-weight: 700;
+        letter-spacing: -0.02em;
+        background: linear-gradient(145deg, #4f46e5, #7c3aed);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 0.15rem;
+    }
+
+    .subtitle {
+        color: #64748b;
+        font-size: 0.95rem;
+        font-weight: 400;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+    }
+
+    .badge {
+        background: rgba(79, 70, 229, 0.08);
+        color: #4f46e5;
+        padding: 0.2rem 0.9rem;
+        border-radius: 40px;
+        font-size: 0.7rem;
+        font-weight: 600;
+        letter-spacing: 0.3px;
+        text-transform: uppercase;
+        border: 1px solid rgba(79, 70, 229, 0.12);
+        display: inline-block;
+    }
+
+    /* ── Form Elements ── */
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    label {
+        display: block;
+        color: #1e293b;
+        font-weight: 600;
+        font-size: 0.85rem;
+        letter-spacing: 0.2px;
+        margin-bottom: 0.4rem;
+    }
+
+    label .optional {
+        color: #94a3b8;
+        font-weight: 400;
+        font-size: 0.75rem;
+    }
+
+    select,
+    input[type="number"],
+    input[type="text"] {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        background: rgba(255, 255, 255, 0.6);
+        border: 1px solid rgba(0, 0, 0, 0.06);
+        border-radius: 14px;
+        color: #0f172a;
+        font-family: 'Inter', sans-serif;
+        font-size: 0.95rem;
+        transition: all 0.2s ease;
+        outline: none;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.01);
+        backdrop-filter: blur(4px);
+    }
+
+    select:hover,
+    input:hover {
+        background: rgba(255, 255, 255, 0.8);
+        border-color: rgba(0, 0, 0, 0.10);
+    }
+
+    select:focus,
+    input:focus {
+        border-color: #4f46e5;
+        background: white;
+        box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.08), 0 2px 8px rgba(0,0,0,0.02);
+    }
+
+    select option {
+        background: white;
+        color: #0f172a;
+    }
+
+    select {
+        appearance: none;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%2364758b' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 1.2rem center;
+        cursor: pointer;
+    }
+
+    /* ── Checkbox ── */
+    .checkbox-group {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        margin-bottom: 1rem;
+    }
+
+    .checkbox-group input[type="checkbox"] {
+        width: 20px;
+        height: 20px;
+        accent-color: #4f46e5;
+        cursor: pointer;
+        flex-shrink: 0;
+        border-radius: 6px;
+        border: 1px solid rgba(0, 0, 0, 0.08);
+        background: white;
+    }
+
+    .checkbox-group label {
+        margin-bottom: 0;
+        cursor: pointer;
+        font-weight: 400;
+        color: #1e293b;
+    }
+
+    /* ── Grid & Layout ── */
+    .grid-2col {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1.25rem;
     }
 
     .flex-row {
-        flex-direction: column;
-        align-items: stretch;
+        display: flex;
+        gap: 0.75rem;
+        align-items: center;
+        flex-wrap: wrap;
+    }
+
+    .flex-row label {
+        margin-bottom: 0;
+        white-space: nowrap;
+        font-weight: 400;
+        color: #334155;
     }
 
     .flex-row input {
-        width: 100%;
-        min-width: unset;
+        width: auto;
+        flex: 1;
+        min-width: 160px;
     }
 
     #customIP {
+        display: inline-block;
+        width: auto;
+        flex: 1;
+        min-width: 180px;
+    }
+
+    .small-text {
+        color: #94a3b8;
+        font-size: 0.75rem;
+        margin-top: 0.3rem;
+        display: block;
+    }
+
+    /* ── Buttons ── */
+    .btn-primary {
+        background: linear-gradient(145deg, #4f46e5, #7c3aed);
+        color: white;
+        border: none;
+        padding: 0.85rem 2.5rem;
+        border-radius: 14px;
+        font-family: 'Inter', sans-serif;
+        font-weight: 600;
+        font-size: 0.95rem;
+        letter-spacing: 0.2px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        box-shadow: 0 6px 20px rgba(79, 70, 229, 0.18);
         width: 100%;
+        border: 1px solid rgba(255, 255, 255, 0.15);
     }
 
-    .header-left h1 {
-        font-size: 1.8rem;
-    }
-}
-
-@media (max-width: 480px) {
-    .container {
-        padding: 1.25rem;
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 30px rgba(79, 70, 229, 0.25);
+        background: linear-gradient(145deg, #6366f1, #7c3aed);
     }
 
-    .header-left h1 {
-        font-size: 1.5rem;
+    .btn-primary:active {
+        transform: translateY(0);
+        box-shadow: 0 4px 12px rgba(79, 70, 229, 0.15);
+    }
+
+    .btn-group {
+        display: flex;
+        gap: 0.75rem;
+        flex-wrap: wrap;
+        margin-top: 0.5rem;
+    }
+
+    .btn-group button {
+        width: auto;
+        flex: 1;
+        min-width: 120px;
+        padding: 0.7rem 1.5rem;
+        font-size: 0.85rem;
+        border-radius: 12px;
+        font-weight: 600;
+        border: 1px solid rgba(0, 0, 0, 0.04);
+        transition: all 0.15s ease;
+        cursor: pointer;
+    }
+
+    .btn-copy {
+        background: rgba(255, 255, 255, 0.6);
+        backdrop-filter: blur(4px);
+        box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+        border: 1px solid rgba(0, 0, 0, 0.04);
+        color: #1e293b;
+    }
+
+    .btn-copy:hover {
+        background: white;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+        transform: translateY(-1px);
+        border-color: rgba(0, 0, 0, 0.08);
+    }
+
+    .btn-download {
+        background: linear-gradient(145deg, #10b981, #059669);
+        color: white;
+        box-shadow: 0 6px 18px rgba(16, 185, 129, 0.15);
+        border: 1px solid rgba(255, 255, 255, 0.10);
+    }
+
+    .btn-download:hover {
+        background: linear-gradient(145deg, #34d399, #059669);
+        box-shadow: 0 8px 28px rgba(16, 185, 129, 0.22);
+        transform: translateY(-2px);
+    }
+
+    /* ── Output Area ── */
+    .output-area {
+        margin-top: 2rem;
+        padding-top: 1.75rem;
+        border-top: 1px solid rgba(0, 0, 0, 0.04);
+    }
+
+    .output-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 0.75rem;
+    }
+
+    .output-header h3 {
+        color: #1e293b;
+        font-size: 0.95rem;
+        font-weight: 600;
+    }
+
+    .output-header span {
+        color: #94a3b8;
+        font-size: 0.75rem;
     }
 
     .output-area textarea {
-        height: 250px;
-        font-size: 0.75rem;
-        padding: 0.9rem;
+        width: 100%;
+        height: 320px;
+        font-family: 'JetBrains Mono', 'Fira Code', monospace;
+        background: rgba(255, 255, 255, 0.5);
+        backdrop-filter: blur(4px);
+        color: #0f172a;
+        padding: 1.25rem;
+        border-radius: 16px;
+        border: 1px solid rgba(0, 0, 0, 0.04);
+        resize: vertical;
+        font-size: 0.85rem;
+        line-height: 1.7;
+        transition: all 0.2s ease;
+        outline: none;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.01);
     }
-}
+
+    .output-area textarea:focus {
+        border-color: rgba(79, 70, 229, 0.15);
+        background: rgba(255, 255, 255, 0.7);
+        box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.04);
+    }
+
+    .output-area textarea::selection {
+        background: rgba(79, 70, 229, 0.12);
+        color: #0f172a;
+    }
+
+    /* ── Note ── */
+    .note {
+        background: rgba(79, 70, 229, 0.03);
+        border-left: 3px solid #4f46e5;
+        padding: 0.85rem 1.25rem;
+        border-radius: 12px;
+        margin: 1rem 0 1.25rem 0;
+        color: #334155;
+        font-size: 0.85rem;
+        line-height: 1.6;
+        backdrop-filter: blur(4px);
+        border: 1px solid rgba(79, 70, 229, 0.04);
+    }
+
+    .note code {
+        background: rgba(79, 70, 229, 0.06);
+        padding: 0.15rem 0.5rem;
+        border-radius: 6px;
+        color: #4f46e5;
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 0.8rem;
+    }
+
+    .note strong {
+        color: #0f172a;
+        font-weight: 600;
+    }
+
+    /* ── Divider ── */
+    .divider {
+        height: 1px;
+        background: linear-gradient(90deg, transparent, rgba(0, 0, 0, 0.04), transparent);
+        margin: 1.5rem 0;
+    }
+
+    /* ── Scrollbar ── */
+    ::-webkit-scrollbar {
+        width: 6px;
+        height: 6px;
+    }
+
+    ::-webkit-scrollbar-track {
+        background: rgba(0, 0, 0, 0.02);
+        border-radius: 12px;
+    }
+
+    ::-webkit-scrollbar-thumb {
+        background: rgba(0, 0, 0, 0.06);
+        border-radius: 12px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+        background: rgba(0, 0, 0, 0.10);
+    }
+
+    ::selection {
+        background: rgba(79, 70, 229, 0.12);
+        color: #0f172a;
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 768px) {
+        body {
+            padding: 1rem;
+        }
+
+        .container {
+            padding: 1.75rem;
+            border-radius: 24px;
+        }
+
+        .grid-2col {
+            grid-template-columns: 1fr;
+            gap: 0.75rem;
+        }
+
+        .btn-group {
+            flex-direction: column;
+        }
+
+        .btn-group button {
+            width: 100%;
+        }
+
+        .flex-row {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .flex-row input {
+            width: 100%;
+            min-width: unset;
+        }
+
+        #customIP {
+            width: 100%;
+        }
+
+        .header-left h1 {
+            font-size: 1.8rem;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .container {
+            padding: 1.25rem;
+        }
+
+        .header-left h1 {
+            font-size: 1.5rem;
+        }
+
+        .output-area textarea {
+            height: 250px;
+            font-size: 0.75rem;
+            padding: 0.9rem;
+        }
+    }
 </style>
 </head>
 <body>
     <div class="container">
-        <h1>⚡ تولید کانفیگ AmneziaWG 3.0 <span class="badge">جدید</span></h1>
-        <p>ساخت کانفیگ با آی‌پی‌های تمیز کلودفلر و پارامترهای پیشرفته AWG 3.0</p>
-
-        <div class="form-group">
-            <label for="cleanIP">آی‌پی تمیز کلودفلر</label>
-            <select id="cleanIP">
-                <option value="">در حال دریافت آی‌پی‌ها...</option>
-            </select>
-            <small>یا می‌توانید به‌صورت دستی وارد کنید: <input type="text" id="customIP" placeholder="مثلاً 104.16.0.1" style="width: auto; display: inline-block;"></small>
+        <div class="header">
+            <div class="header-left">
+                <h1>⚡ AmneziaWG 3.0 Config Generator</h1>
+                <div class="subtitle">
+                    <span>Generate clean IP configs with AWG 3.0 parameters</span>
+                    <span class="badge">New</span>
+                </div>
+            </div>
         </div>
 
         <div class="form-group">
-            <label for="port">پورت</label>
+            <label for="cleanIP">Clean Cloudflare IP</label>
+            <select id="cleanIP">
+                <option value="">Loading IPs...</option>
+            </select>
+            <div class="flex-row" style="margin-top: 0.5rem;">
+                <label for="customIP" style="font-weight: 400; color: #64748b;">Or enter manually:</label>
+                <input type="text" id="customIP" placeholder="e.g. 104.16.0.1">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="port">Port</label>
             <input type="number" id="port" value="443" min="1" max="65535">
         </div>
 
         <div class="form-group">
-            <label>تنظیمات پدینگ (Padding)</label>
-            <div style="display: flex; gap: 1rem;">
-                <div><label>S3 (حداقل)</label> <input type="number" id="s3" value="12" min="12"></div>
-                <div><label>S4 (حداکثر)</label> <input type="number" id="s4" value="128" min="12"></div>
+            <label>Padding Settings</label>
+            <div class="grid-2col">
+                <div>
+                    <label for="s3" style="font-weight: 400; font-size: 0.8rem;">S3 (minimum)</label>
+                    <input type="number" id="s3" value="12" min="12">
+                </div>
+                <div>
+                    <label for="s4" style="font-weight: 400; font-size: 0.8rem;">S4 (maximum)</label>
+                    <input type="number" id="s4" value="128" min="12">
+                </div>
             </div>
-            <small>در AWG 3.0 مقدار S3 و S4 باید حداقل 12 باشد.</small>
+            <span class="small-text">In AWG 3.0, S3 and S4 values must be at least 12.</span>
         </div>
 
         <div class="form-group">
-            <label>تنظیمات تایمر (محدوده تصادفی)</label>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem;">
-                <div><label>Keepalive</label> <input type="text" id="keepalive" value="8-22" placeholder="8-22"></div>
-                <div><label>Rekey After</label> <input type="text" id="rekeyAfter" value="105-140" placeholder="105-140"></div>
-                <div><label>Rekey Timeout</label> <input type="text" id="rekeyTimeout" value="3-8" placeholder="3-8"></div>
-                <div><label>Reject After</label> <input type="text" id="rejectAfter" value="160-220" placeholder="160-220"></div>
+            <label>Timer Settings (random range)</label>
+            <div class="grid-2col">
+                <div>
+                    <label for="keepalive" style="font-weight: 400; font-size: 0.8rem;">Keepalive</label>
+                    <input type="text" id="keepalive" value="8-22" placeholder="8-22">
+                </div>
+                <div>
+                    <label for="rekeyAfter" style="font-weight: 400; font-size: 0.8rem;">Rekey After</label>
+                    <input type="text" id="rekeyAfter" value="105-140" placeholder="105-140">
+                </div>
+                <div>
+                    <label for="rekeyTimeout" style="font-weight: 400; font-size: 0.8rem;">Rekey Timeout</label>
+                    <input type="text" id="rekeyTimeout" value="3-8" placeholder="3-8">
+                </div>
+                <div>
+                    <label for="rejectAfter" style="font-weight: 400; font-size: 0.8rem;">Reject After</label>
+                    <input type="text" id="rejectAfter" value="160-220" placeholder="160-220">
+                </div>
             </div>
         </div>
 
         <div class="form-group">
             <div class="checkbox-group">
                 <input type="checkbox" id="enableAWG3" checked disabled>
-                <label for="enableAWG3" style="display: inline;">فعال‌سازی پارامترهای AWG 3.0 <span class="badge">پیش‌فرض</span></label>
+                <label for="enableAWG3" style="display: inline;">Enable AWG 3.0 Parameters <span class="badge">Default</span></label>
             </div>
-            <small>پارامترهای HeaderProtectionKey و ContentPaddingAddition به‌صورت خودکار تولید می‌شوند.</small>
+            <span class="small-text">HeaderProtectionKey and ContentPaddingAddition are auto-generated.</span>
         </div>
 
-        <button id="generateBtn">🔧 ساخت کانفیگ</button>
+        <button class="btn-primary" id="generateBtn">🔧 Generate Config</button>
 
         <div class="output-area" id="outputArea" style="display: none;">
-            <h3>کانفیگ تولید شده:</h3>
+            <div class="output-header">
+                <h3>📄 Generated Config</h3>
+                <span id="charCount">0 characters</span>
+            </div>
             <div class="note">
-                ⚠️ کلید <strong>HeaderProtectionKey</strong> در بخش <code>[Interface]</code> باید دقیقاً بین سرور و کلاینت یکسان باشد.
+                ⚠️ The <strong>HeaderProtectionKey</strong> in the <code>[Interface]</code> section must be identical between server and client.
             </div>
             <textarea id="configOutput" readonly></textarea>
-            <button class="copy-btn" id="copyBtn">📋 کپی در کلیپ‌بورد</button>
-            <button class="copy-btn" id="downloadBtn" style="background: #6c3b9e;">⬇️ دانلود فایل .conf</button>
+            <div class="btn-group">
+                <button class="btn-copy" id="copyBtn">📋 Copy to Clipboard</button>
+                <button class="btn-download" id="downloadBtn">⬇️ Download .conf</button>
+            </div>
         </div>
     </div>
 
     <script>
-        // ---------- گام دوم: منطق برنامه (جاوااسکریپت) ----------
+        // ---------- Logic ----------
         
-        // دریافت آی‌پی‌های تمیز از سرویس‌دهنده
+        // Fetch clean IPs
         async function fetchCleanIPs() {
             const select = document.getElementById('cleanIP');
             try {
-                // در اینجا می‌توانید از API خود یا سرویس‌های عمومی استفاده کنید
-                // برای نمونه از یک لیست ثابت استفاده می‌کنیم
                 const ips = [
                     '104.16.0.1', '104.16.1.1', '104.16.2.1', '104.16.3.1',
                     '104.16.4.1', '104.16.5.1', '104.16.6.1', '104.16.7.1',
@@ -572,30 +604,29 @@ select {
                     '104.16.12.1', '104.16.13.1', '104.16.14.1', '104.16.15.1'
                 ];
                 select.innerHTML = ips.map(ip => `<option value="${ip}">${ip}</option>`).join('');
-                select.innerHTML += `<option value="custom">استفاده از آی‌پی دستی</option>`;
+                select.innerHTML += `<option value="custom">Use custom IP</option>`;
             } catch (error) {
-                select.innerHTML = '<option value="">خطا در دریافت آی‌پی‌ها</option>';
-                console.error('خطا:', error);
+                select.innerHTML = '<option value="">Error loading IPs</option>';
+                console.error('Error:', error);
             }
         }
 
-        // تولید کلید تصادفی برای HeaderProtectionKey (32 بایت = 64 کاراکتر هگز)
+        // Generate random key (32 bytes = 64 hex chars)
         function generateRandomKey() {
             const bytes = new Uint8Array(32);
             crypto.getRandomValues(bytes);
             return Array.from(bytes).map(b => b.toString(16).padStart(2, '0')).join('');
         }
 
-        // تولید کلید خصوصی/عمومی (برای ساده‌سازی از کلیدهای تصادفی استفاده می‌کنیم)
+        // Generate private key
         function generatePrivateKey() {
             const bytes = new Uint8Array(32);
             crypto.getRandomValues(bytes);
             return 'PRIVATE_KEY_' + Array.from(bytes).map(b => b.toString(16).padStart(2, '0')).join('').substring(0, 32);
         }
 
-        // تولید کانفیگ نهایی
+        // Generate config
         function generateConfig() {
-            // دریافت مقادیر از فرم
             let ip = document.getElementById('cleanIP').value;
             const customIP = document.getElementById('customIP').value.trim();
             if (customIP) ip = customIP;
@@ -609,25 +640,21 @@ select {
             const rejectAfter = document.getElementById('rejectAfter').value;
 
             if (!ip || ip === 'custom') {
-                alert('لطفاً یک آی‌پی تمیز معتبر وارد کنید.');
+                alert('Please enter a valid clean IP address.');
                 return;
             }
 
-            // تولید پارامترهای AWG 3.0
             const headerProtectionKey = generateRandomKey();
             const contentPadding = `${s3}-${s4}`;
-            
-            // تولید کلیدهای ساده (در محیط واقعی باید از کتابخانه‌های مناسب استفاده شود)
             const privateKey = generatePrivateKey();
             const publicKey = 'PUBLIC_KEY_' + generateRandomKey().substring(0, 32);
 
-            // ساخت کانفیگ
             const config = `[Interface]
         PrivateKey = ${privateKey}
         Address = 10.0.0.2/32
         DNS = 1.1.1.1, 8.8.8.8
 
-        # پارامترهای AWG 3.0
+        # AWG 3.0 Parameters
         HeaderProtectionKey = ${headerProtectionKey}
         ContentPaddingAddition = ${contentPadding}
         KeepaliveTimeout = ${keepalive}
@@ -645,31 +672,39 @@ select {
             return config;
         }
 
-        // نمایش کانفیگ در خروجی
+        // Display config
         function displayConfig() {
             const config = generateConfig();
             if (!config) return;
             
-            document.getElementById('configOutput').value = config;
+            const textarea = document.getElementById('configOutput');
+            textarea.value = config;
             document.getElementById('outputArea').style.display = 'block';
+            document.getElementById('charCount').textContent = config.length + ' characters';
         }
 
-        // کپی در کلیپ‌بورد
+        // Copy to clipboard
         function copyConfig() {
             const textarea = document.getElementById('configOutput');
             navigator.clipboard.writeText(textarea.value).then(() => {
-                alert('کانفیگ کپی شد!');
+                const btn = document.getElementById('copyBtn');
+                const orig = btn.textContent;
+                btn.textContent = '✅ Copied!';
+                setTimeout(() => { btn.textContent = orig; }, 1500);
             }).catch(() => {
                 textarea.select();
                 document.execCommand('copy');
-                alert('کانفیگ کپی شد!');
+                alert('Config copied to clipboard!');
             });
         }
 
-        // دانلود فایل
+        // Download file
         function downloadConfig() {
             const config = document.getElementById('configOutput').value;
-            if (!config) return;
+            if (!config) {
+                alert('Please generate a config first.');
+                return;
+            }
             
             const blob = new Blob([config], { type: 'text/plain' });
             const url = URL.createObjectURL(blob);
@@ -682,22 +717,15 @@ select {
             URL.revokeObjectURL(url);
         }
 
-        // ---------- گام سوم: راه‌اندازی رویدادها ----------
+        // ---------- Event Listeners ----------
         
         document.addEventListener('DOMContentLoaded', () => {
-            // دریافت آی‌پی‌های تمیز
             fetchCleanIPs();
             
-            // دکمه تولید کانفیگ
             document.getElementById('generateBtn').addEventListener('click', displayConfig);
-            
-            // دکمه کپی
             document.getElementById('copyBtn').addEventListener('click', copyConfig);
-            
-            // دکمه دانلود
             document.getElementById('downloadBtn').addEventListener('click', downloadConfig);
             
-            // فعال‌سازی فیلد آی‌پی دستی
             document.getElementById('cleanIP').addEventListener('change', function() {
                 const customField = document.getElementById('customIP');
                 if (this.value === 'custom') {
